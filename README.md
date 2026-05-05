@@ -201,11 +201,6 @@ export const metadata = {
 
 MIT License - 可商用
 
-## 📧 联系支持
-
-- 邮件: hello@erandesign.com
-- 电话: +86 138-xxxx-xxxx
-- 地址: 上海市静安区南京西路 1266 号
 
 ## 🌟 致谢
 
