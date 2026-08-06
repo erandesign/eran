@@ -1,15 +1,42 @@
-import { For, createSignal } from 'solid-js'
+import { For, createEffect, createSignal } from 'solid-js'
+import { useSearchParams } from '@solidjs/router'
 import { ThemeChange } from '~/components/ThemeChange'
 import { I18n, i18n } from '~/components/i18n'
 
-const [currType, setCurrType] = createSignal(0)
+/** 从 URL 读取当前筛选类型（中文值），无筛选返回 '' */
+export function getCurrType() {
+  const [params] = useSearchParams()
+  return typeof params.type === 'string' ? params.type : ''
+}
+
 const allType = () => [i18n.subTitle_all(), ...i18n.subTitles()]
 const allZHType = () => [i18n.subTitle_all(), ...i18n.subTitles({}, { lang: 'zh' })]
 
-export const getCurrType = () => currType() > 0 ? allZHType()[currType()] : ''
-
-/** 作品头部 */
+/** 作品头部（支持 URL 参数筛选：/zh/works?type=地产&办公） */
 export default function Header() {
+  const [params, setParams] = useSearchParams()
+  const [currType, setCurrType] = createSignal(0)
+
+  // 初始化：URL 中的 type 参数 -> 对应索引
+  createEffect(() => {
+    const t = typeof params.type === 'string' ? params.type : ''
+    if (!t) {
+      setCurrType(0)
+      return
+    }
+    const idx = allZHType().findIndex(v => v === t)
+    setCurrType(idx > 0 ? idx : 0)
+  })
+
+  // 点击：更新 URL 并设置状态
+  const handleClick = (i: number) => {
+    setCurrType(i)
+    if (i === 0)
+      setParams({ type: undefined }, { replace: true })
+    else
+      setParams({ type: allZHType()[i] }, { replace: true })
+  }
+
   return (
     <div class="relative grid e-grid px-150">
       {/* logo */}
@@ -34,7 +61,7 @@ export default function Header() {
               classList={{
                 'dark:text-#fff! light:text-#000!': i() === currType(),
               }}
-              onClick={[setCurrType, i]}
+              onClick={() => handleClick(i())}
             >
               {item}
             </span>
@@ -44,4 +71,4 @@ export default function Header() {
       <ThemeChange />
     </div>
   )
-};
+}

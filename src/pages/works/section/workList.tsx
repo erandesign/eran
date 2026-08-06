@@ -60,6 +60,7 @@ export default function WorkList() {
                         'h-800': i() % n === n - 1,
                       }}
                       src={item.cover}
+                      alt={item.name}
                       loading="lazy"
                     />
                   </A>

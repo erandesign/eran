@@ -1,6 +1,7 @@
 import Founder from './founder'
 import Footer2top from '~/components/Footer2top'
 import SiteTitle from '~/components/SiteTitle'
+import SeoMeta from '~/components/SeoMeta'
 import ConcatBlock from '~/components/concatBlock/concatBlock'
 import { I18n, i18n } from '~/components/i18n'
 import Nav from '~/components/nav/nav'
@@ -11,6 +12,7 @@ export default function About() {
   return (
     <main id="about-main">
       <SiteTitle>{i18n.nav_p_2()}</SiteTitle>
+      <SeoMeta />
       <Nav sticky class="px-150" />
       <TaiChi>
         <I18n

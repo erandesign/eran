@@ -2,8 +2,11 @@ import { useParams } from '@solidjs/router'
 import { ErrorBoundary, For, Match, Show, Switch, createEffect, createResource } from 'solid-js'
 import dayjs from 'dayjs'
 import { Dynamic } from 'solid-js/web'
+import { Title } from '@solidjs/meta'
 import { contentTypeMap } from './contentTypeMap'
 import { I18n, i18n } from '~/components/i18n'
+import SeoMeta from '~/components/SeoMeta'
+import { WorkJsonLd } from '~/components/JsonLd'
 import { getPublicWorkById, getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
 /**  */
@@ -13,11 +16,34 @@ export default function Detail() {
 
   return (
     <div class="min-h-100vh">
+      <Show when={data()}>
+        <Title>{data()!.name} | {i18n.title()}</Title>
+        <meta name="description" content={`${data()!.name} - ${data()!.address} - ${data()!.investor} - ${(data()!.description || '').slice(0, 120)}`} />
+        <link rel="canonical" href={`https://www.erandesign.cn/${data()!.lang === 'en' ? 'en' : 'zh'}/work/${data()!.id}`} />
+        <SeoMeta
+          title={`${data()!.name} | ${i18n.title()}`}
+          description={`${data()!.name} - ${data()!.address} - ${data()!.investor}`}
+          image={data()!.cover}
+          type="article"
+        />
+        <WorkJsonLd
+          name={data()!.name}
+          description={data()!.description}
+          address={data()!.address}
+          investor={data()!.investor}
+          area={data()!.area}
+          timeStart={data()!.time_start}
+          timeEnd={data()!.time_end}
+          image={data()!.cover}
+          id={data()!.id}
+          lang={data()!.lang}
+        />
+      </Show>
 
       <ErrorBoundary fallback={<NotShow />}>
         <Show when={data()} fallback={<NotShow />}>
           {/* 封面 */}
-          <Image class="h-1080 w-full object-cover" src={data()!.cover} />
+          <Image class="h-1080 w-full object-cover" src={data()!.cover} alt={data()!.name} />
           {/* 信息 */}
           <div class="grid grid-rows-[auto_1fr] e-grid w-full px-150 py-88">
             <h1 class="col-span-full m-0 mb-50 text-24 font-normal tracking-8">{data()!.name}</h1>

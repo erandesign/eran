@@ -1,11 +1,15 @@
 import { action, cache } from '@solidjs/router'
 import { useSession } from 'vinxi/http'
-/** 是否管理员 */
+
+const SESSION_SECRET = process.env.SESSION_SECRET || 'dev-insecure-secret-change-me'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '123'
+
+/** 登陆 */
 export const login = action(async (formData: FormData) => {
   'use server'
   const s = await getSession()
   const password = formData.get('password')
-  const res = password === '123'
+  const res = password === ADMIN_PASSWORD
   console.log(`admin ${s.id} login => ${res}`)
   await s.update((d) => {
     d.isAdmin = res
@@ -40,13 +44,13 @@ export const isAdminC = cache(async () => {
 function getSession() {
   'use server'
   return useSession({
-    password: `background:#1bd24a;color:#5fff8e;font-size:13px;`, // 这个是密码，暂时不要动
+    password: SESSION_SECRET,
     cookie: {
-      secure: false, // 关闭这个才能在http环境下使用
+      secure: process.env.NODE_ENV === 'production',
     },
   })
 }
-// 检测是否管理员
+/** 检查管理员 */
 export async function checkAdmin() {
   'use server'
   const s = await getSession()

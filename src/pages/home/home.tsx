@@ -7,6 +7,8 @@ import Desc from './section/desc'
 import Customer from './section/customer'
 import { i18n } from '~/components/i18n'
 import SiteTitle from '~/components/SiteTitle'
+import SeoMeta from '~/components/SeoMeta'
+import { OrganizationJsonLd } from '~/components/JsonLd'
 import Concat from '~/components/concatBlock/concatBlock'
 import Footer2top from '~/components/Footer2top'
 import { setTheme } from '~/components/ThemeChange'
@@ -25,6 +27,8 @@ export default function Home() {
   return (
     <>
       <SiteTitle>{i18n.title_home()}</SiteTitle>
+      <SeoMeta />
+      <OrganizationJsonLd />
       <main id="home-main" class="relative snap-x snap-proximity overflow-auto h-dvh">
         {/* 动画 */}
         {/* <Gsap /> */}

@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /zh/admin
+Disallow: /en/admin
+Disallow: /login
+Disallow: /zh/login
+Disallow: /en/login
+
+Sitemap: https://www.erandesign.cn/sitemap.xml
