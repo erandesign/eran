@@ -1,0 +1,245 @@
+{
+  "projects_list": [
+    {
+      "name": "西哈努克港七星湾会所1",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }, {
+      "name": "西哈努克港七星湾会所2",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }, {
+      "name": "西哈努克港七星湾会所3",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }, {
+      "name": "西哈努克港七星湾会所4",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }, {
+      "name": "西哈努克港七星湾会所5",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }, {
+      "name": "西哈努克港七星湾会所6",
+      "description": "在日常办公空间里用线型来表达企业的专属理念.",
+      "address": "柬埔寨",
+      "type": "地产办公",
+      "time_start": "2020-01-10",
+      "time_end": "2023-01-10",
+      "investor": "七星湾",
+      "area": "123",
+      "cover": "/images/c2.webp",
+      "content": [
+        // 按不同的类型来展示不同的内容，注意type的值对应的ui
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "Lr",
+          "L_image": "/images/c2.webp",
+          "r_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        { "type": "big", "image": "/images/c2.webp" },
+        {
+          "type": "lR",
+          "l_image": "/images/c2.webp",
+          "R_image": "images/c2.webp"
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "title_desc_image",
+          "image": "/images/c2.webp",
+          "title": "餐厅",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        },
+        { "type": "cover", "image": "/images/c2.webp" },
+        {
+          "type": "desc_2image",
+          "image1": "/images/c2.webp",
+          "image2": "/images/c2.webp",
+          "desc": "在日常办公空间里用线型来表达企业的专属理念."
+        }
+      ]
+    }
+  ]
+}

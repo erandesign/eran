@@ -1,0 +1,9 @@
+{
+  "language": ["zh", "en"],
+  "multipleFilesLanguage": {
+    "zh": ["projects/zh*"]
+  },
+  "defaultLanguage": "zh",
+  "inputDir": "messages",
+  "outputDir": "./src/i18n"
+}

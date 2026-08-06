@@ -1,0 +1,144 @@
+{
+  "title": "ERAN DESIGN",
+  "msg404": "页面不存在",
+  "noData": "暂无数据",
+  "msg404_brack_home": "返回首页",
+  "title_home": "首页",
+  "home_1_desc": "我们链接多个业态\n致力为您提供最合适的设计解决方案\n{@subTitles|..join(' | ')}",
+  "home_1_title": "我们用\n空间叙事，\n链接商业与未来。",
+  //
+  // "subTitle_1": "地产&办公",
+  // "subTitle_2": "终端SI",
+  // "subTitle_3": "展示道具",
+  // "subTitle_4": "品牌VI",
+  // "subTitle_5": "网站&APP",
+  "subTitles": [
+    "地产&办公",
+    "终端SI",
+    "展示道具",
+    "品牌VI",
+    "网站&APP"
+  ],
+  "subTitle_all": "全部作品",
+  "subTitle_other": "其他",
+  //
+  "nav_p_1": "作   品",
+  "nav_p_2": "团   队",
+  "nav_p_3": "联系我们",
+  "nav_btn": "和我们聊聊",
+  //
+  "slogan_1": "我们关注时代革新",
+  "slogan_2": "为客户提供：",
+  "slogan_3": "「整体化 可持续性 高识别度」",
+  "slogan_4": "设计方案",
+  //
+  "photoAlbum_btn": "全部项目",
+  //
+  "desc_1_1": "从设计到研发   从SI到POSM",
+  "desc_1_2": "我们提供最合适的设计解决方案",
+  "desc_2_1": "商业研究",
+  "desc_2_2": "从用户体验出发",
+  "desc_3_1": "设计创意",
+  "desc_3_2": "以叙事构筑空间",
+  "desc_c_1": "市场调研",
+  "desc_c_2": "竞品分析",
+  "desc_c_3": "行业策略",
+  "desc_c_m_1": "商业研究",
+  "desc_c_m_2": "从用户体验出发",
+  "desc_l_1": "从商业视角制定用户体验设计策略",
+  "desc_l_2": "品牌市场及受众群体调研",
+  "desc_l_3": "核心设计目标分析",
+  "desc_l_4": "行业/市场方向分析",
+  "desc_l_5": "主题概念提炼",
+  //
+  "customers": [
+    {
+      "logo": "/images/customer/dji.webp"
+    },
+    {
+      "logo": "/images/customer/liantai.webp"
+    },
+    {
+      "logo": "/images/customer/oppo.webp"
+    },
+    {
+      "logo": "/images/customer/shokz.webp"
+    },
+    {
+      "logo": "/images/customer/sunlord.webp"
+    },
+    {
+      "logo": "/images/customer/tenon.webp"
+    },
+    {
+      "logo": "/images/customer/vivo.webp"
+    },
+    {
+      "logo": "/images/customer/baoli.webp"
+    },
+    {
+      "logo": "/images/customer/oneplus.webp"
+    }
+  ],
+  "our_project": "OUR\nPROJECTS",
+  // concat page
+  "concat_t": "您正在寻找一家设计公司？",
+  "concat_p": "请输入联系电话/邮箱",
+  "concat_subt": "您想要了解…",
+  "concat_submit": "提交这些信息",
+
+  "concat_information": [
+    {
+      "label": "PHONE / WECHAT",
+      "value": "+86 185 6565 0856"
+    },
+    {
+      "label": "E-MAIL",
+      "value": "info@erandesign.cn"
+    },
+    {
+      "label": "BASED ON",
+      "value": "中国，深圳"
+    }
+  ],
+  "concat_copyright": "©️2024 ERAN DESIGN Co.,Ltd. 保留所有权利。",
+  "concat_label": "联系我们, 获取设计报价\n立即获得反馈, 为您提供规划方案",
+  "concat_qr_1": "qrcode_company.webp",
+  "concat_qr_2": "qrcode_wechat.webp",
+  "concat_qr_text_1": "公众号",
+  "concat_qr_text_2": "商务联系",
+  "concat_title": "和我们聊聊\n获取您的设计解决方案",
+  // about page
+  "about_title": "我们用空间叙事\n链接商业与未来",
+  "about_founder_img": "/images/works/Photos.webp", // "https://placehold.co/1030x600",
+  "about_founder_user": "侯东郑",
+  "about_founder_user_job": "创始人及设计总监",
+  "about_founder_desc": "从业多年以来对多个项目进行多维度、多尺度的设计研究。\n从建筑视角切入塑造室内空间，用空间叙事™性逻辑为每个作品注入空间情感。\n\n对于不同的项目有自己独特的专业理解，尤其擅长运用曲线曲面造型塑造富有张力的空间语言，\n目前已成功塑造多个具有识别性、前瞻性的空间形象。",
+  "about_company_img": "/images/works/Image Wall.jpg", // "https://placehold.co/1030x600",
+  "about_company_desc": "ERAN DESIGN,成立于中国深圳。\n\n我们链接多个业态，我们关注时代，关注社会趋势以及生活方式的行为体验，在每个设计中寻求洞⻅与策略。\n\n我们从建筑视角切入塑造室内空间，用叙事性逻辑为每个作品注入空间情感，为业主提供可持续，整体化，高识别性的空间设计。",
+  "about_wwd_title": "WHAT WE DO",
+  "about_wwd_list": [
+    {
+      "img": "/images/cover.webp",
+      "title": "设计策略"
+    },
+    {
+      "img": "/images/c1.jpeg",
+      "title": "场地调研（物理环境/精神环境）"
+    },
+    {
+      "img": "/images/c2.webp",
+      "title": "设计目标及条件分析"
+    },
+    {
+      "img": "/images/cover.webp",
+      "title": "品牌市场及受众群体调研"
+    },
+    {
+      "img": "/images/c2.webp",
+      "title": "主题提炼-概念方案文本"
+    }
+  ],
+  // 作品
+  "works_title": "我们链接多个业态，\n致力为您提供\n<span>最合适的设计解决方案。</span>"
+}

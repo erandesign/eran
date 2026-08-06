@@ -1,0 +1,139 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "title": "ERAN DESIGN",
+  "msg404": "Page not found",
+  "noData": "no data",
+  "msg404_brack_home": "return to home page",
+  "title_home": "home",
+  "home_1_desc": "We Design Across Industries.\nTailored design solutions for you.\n{@subTitles|..join(' | ')}",
+  "home_1_title": "WHERE\nSPACE MEETS\n         STORYTELING\nSHAPING BUSINESS FUTURE.",
+  //
+  "subTitles": [
+    "Estate & Office",
+    "Space Identity",
+    "Space Identity",
+    "Branding VI",
+    "Web & App"
+  ],
+  "subTitle_all": "ALL WORKS",
+  "subTitle_other": "Others",
+  //
+  "nav_p_1": "WORKS",
+  "nav_p_2": "TEAM",
+  "nav_p_3": "CONTACT",
+  "nav_btn": "LET’S TALK",
+  //
+  "slogan_1": "Beyond Trends. Create Forward-Thinking Design",
+  "slogan_2": "Unify Your Vision.",
+  "slogan_3": "We Craft High Recognizable, Sustainable and Complete",
+  "slogan_4": "Design Solutions for Every Business.",
+  //
+  "photoAlbum_btn": "ALL WORKS",
+  //
+  "desc_1_1": "From Design To R&D From Space Identity To POSM",
+  "desc_1_2": "We Offer the Most Suitable Design Solutions",
+  "desc_2_1": "Business Research",
+  "desc_2_2": "Building From User Experience",
+  "desc_3_1": "Design Creativity",
+  "desc_3_2": "Constructing Space with Narratives",
+  //
+  "desc_c_1": "Market\nResearch",
+  "desc_c_2": "Competitive\nAnalysis",
+  "desc_c_3": "Industry\nStrategy",
+  "desc_c_m_1": "Business Research",
+  "desc_c_m_2": "Building From\nUser Experience",
+  //
+  "desc_l_1": "Developing User Experience Strategies from Business Perspectives",
+  "desc_l_2": "Brand Market & Audience Research",
+  "desc_l_3": "Core Design Objective Analysis",
+  "desc_l_4": "Industry / Market Direction Analysis",
+  "desc_l_5": "Refinement Of Concepts For Themes",
+  //
+  "customers": [
+    {
+      "logo": "/images/customer/dji.webp"
+    },
+    {
+      "logo": "/images/customer/liantai.webp"
+    },
+    {
+      "logo": "/images/customer/oppo.webp"
+    },
+    {
+      "logo": "/images/customer/shokz.webp"
+    },
+    {
+      "logo": "/images/customer/sunlord.webp"
+    },
+    {
+      "logo": "/images/customer/tenon.webp"
+    },
+    {
+      "logo": "/images/customer/vivo.webp"
+    },
+    {
+      "logo": "/images/customer/baoli.webp"
+    },
+    {
+      "logo": "/images/customer/oneplus.webp"
+    }
+  ],
+  //
+  "our_project": "OUR\nPROJECTS",
+  "concat_t": "ARE YOU LOOKING FOR A DESIGN COMPANY ?",
+  "concat_p": "Enter your e-mail here",
+  "concat_subt": "You want to talk about…",
+  "concat_submit": "Submit the request",
+
+  "concat_information": [
+    {
+      "label": "E-MAIL",
+      "value": "info@erandesign.cn"
+    },
+    {
+      "label": "BASED ON",
+      "value": "China ，ShenZhen City"
+    }
+  ],
+  "concat_copyright": "©️2024 ERAN DESIGN Co., Ltd. All rights reserved.",
+  "concat_label": "Contact us and Get Design Quote.\nCraft unique design solutions for you.",
+  "concat_qr_1": "qrcode_company.webp",
+  "concat_qr_2": "qrcode_wechat.webp",
+  "concat_qr_text_1": "公众号",
+  "concat_qr_text_2": "商务联系",
+  //
+  "concat_title": "<span>LET’S TALK</span>\nGET YOUR\nUNIQUE DESIGN SOLUTION",
+  // about page
+  "about_title": "WHERE\n<span>SPACE MEETS STORYTELING</span>\nSHAPING BUSINESS FUTURE.",
+  "about_founder_img": "/images/works/Photos.webp",
+  "about_founder_user": "Dongzhen Hou",
+  "about_founder_user_job": "CEO & Design Director",
+  "about_founder_desc": "Conducted multi-dimensional and multi-scale design studies for many projects over the years.\n\nShaping the interior space from an architectural perspective, using Spatial Narrative logic to infuse each work with spatial emotion.\n\nHe has unique professional understanding of different projects，especially good at using curved surfaces to create a tense spatial language，currently has successfully shaped a number of recognizable, forward-looking space image。",
+  "about_company_img": "/images/works/Image Wall.jpg",
+  "about_company_desc": "ERAN DESIGN, founded in Shenzhen, China.\n\nWe design across industries，beyond trends, we create forward-thinking design unify your vision.\nPay attention to social trends and lifestyle behavioral experiences, and seek insights and strategies in every design.\n\nConstructing Space with an architectural perspective，use narrative logic to inject spatial emotion into each work.\n\nWe craft <span>High Recognizable, Sustainable and Complete Design Solutions</span> for every business.",
+  "about_wwd_title": "WHAT WE DO",
+  "about_wwd_list": [
+    {
+      "img": "/images/cover.webp",
+      "title": "Design Strategy"
+    },
+    {
+      "img": "/images/c1.jpeg",
+      "title": "Site Research（physical/mental environment）"
+    },
+    {
+      "img": "/images/c2.webp",
+      "title": "Design goals and condition analysis"
+    },
+    {
+      "img": "/images/cover.webp",
+      "title": "Brand market and audience research"
+    },
+    {
+      "img": "/images/c2.webp",
+      "title": "Theme Extraction - Concept Plan Text"
+    }
+  ],
+  // 作品
+  "works_title": "WE DESIGN ACROSS INDUSTRIES\n<span>TAILORED DESIGN</span>\n<span>SOLUTIONS FOR YOU</span>"
+}

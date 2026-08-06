@@ -1,0 +1,1 @@
+ALTER TABLE `worklist` ADD `index` integer DEFAULT 0 NOT NULL;

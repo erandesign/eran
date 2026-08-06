@@ -1,0 +1,30 @@
+// @refresh reload
+import { StartServer, createHandler } from '@solidjs/start/server'
+import { locationLanguageTag } from '~/components/i18n'
+
+export default createHandler(() => {
+  const url_language_tag = locationLanguageTag()
+  return (
+    <StartServer
+      document={({ assets, children, scripts }) => (
+        <html lang={url_language_tag} class="dark">
+          <head>
+            <meta charset="utf-8" />
+            {/* <meta name="viewport" content="width=device-width, initial-scale=1" /> */}
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover"
+            />
+            <link rel="icon" href="/favicon.ico" />
+            <link rel="stylesheet" href="/font/LXGWFasmartGothic/font.css" />
+            {assets}
+          </head>
+          <body>
+            <div id="app">{children}</div>
+            {scripts}
+          </body>
+        </html>
+      )}
+    />
+  )
+})
