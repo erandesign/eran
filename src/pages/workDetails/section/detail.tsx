@@ -43,7 +43,7 @@ export default function Detail() {
       <ErrorBoundary fallback={<NotShow />}>
         <Show when={data()} fallback={<NotShow />}>
           {/* 封面 */}
-          <Image class="h-1080 w-full object-cover" src={data()!.cover} alt={data()!.name} />
+          <Image class="h-1080 w-full object-cover" src={data()!.cover} alt={data()!.name} lazy={false} />
           {/* 信息 */}
           <div class="grid grid-rows-[auto_1fr] e-grid w-full px-150 py-88">
             <h1 class="col-span-full m-0 mb-50 text-24 font-normal tracking-8">{data()!.name}</h1>
