@@ -51,20 +51,21 @@ function thumbOf(src: string): string {
 }
 
 /**
- * 图片组件：
- * - SSR/预渲染：默认可见（SEO 完整）
- * - 客户端水合后：视口外的图进入懒加载队列
- * - Intersection Observer：进入视口前 300px 触发预加载
+ * 图片组件（稳健版）：
+ * - 默认可见：SSR/预渲染 HTML 图片完整（SEO），且不依赖 observer 时序
+ * - 客户端水合后：视口前 300px 内保持可见并预加载；视口外进入懒加载队列
+ * - IntersectionObserver：进入视口前 300px 触发预加载
  * - new Image() 预加载完成后才淡入显示，避免闪烁
  * - 全站并发限制 2 张，避免网络拥堵
  * - srcset 响应式：移动端加载 .750 缩略图
  */
 export default function Image(_props: ImageProps) {
   const [props, otherProps] = splitProps(_props, ['src', 'loading', 'style', 'ratio', 'lazy', 'alt', 'classList', 'class'])
-  // 默认可见：保证 SSR/预渲染 HTML 图片完整（SEO）
+  // 默认可见：保证 SSR/首屏/SPA 导航图片一定能显示
   const [loaded, setLoaded] = createSignal(true)
   const [failed, setFailed] = createSignal(false)
   let el: HTMLImageElement | undefined
+  let observer: IntersectionObserver | undefined
 
   /** 构造 srcset：优先 .750 缩略图（移动端），原图为大屏 */
   const srcset = () => {
@@ -100,33 +101,56 @@ export default function Image(_props: ImageProps) {
     const src = props.src
     if (!src)
       return
+    // 图片加载完成/失败事件兜底：无论懒加载时序如何，加载完必定显示
+    const onLoad = () => setLoaded(true)
+    const onError = () => setFailed(true)
+    el?.addEventListener('load', onLoad)
+    el?.addEventListener('error', onError)
+    onCleanup(() => {
+      el?.removeEventListener('load', onLoad)
+      el?.removeEventListener('error', onError)
+    })
+
     // 首屏关键图：保持可见
     if (props.lazy === false)
       return
-    // 图片已被浏览器原生 lazy 加载完成：保持可见
+    // 图片已被加载完成：保持可见
     if (el?.complete && el.naturalWidth > 0)
       return
-    // 原生 lazy 不可用（旧浏览器）：降级为保持可见（不阻塞显示）
+    // 环境不支持 IntersectionObserver：保持可见（降级）
     if (typeof IntersectionObserver === 'undefined')
       return
-    // 视口外图片：先隐藏（opacity-0），进入视口前 300px 时预加载完成后淡入
-    setLoaded(false)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            observer.disconnect()
-            startLoad()
-            break
+
+    // 延迟到布局完成后判断视口位置（SPA 导航时序安全）
+    requestAnimationFrame(() => {
+      if (!el)
+        return
+      const rect = el.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      // 视口前 300px 内：保持可见，直接预加载（并发控制）
+      if (rect.top < vh + 300 && rect.bottom > -300) {
+        startLoad()
+        return
+      }
+      // 视口外：隐藏图片，进入懒加载队列
+      setLoaded(false)
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              observer?.disconnect()
+              startLoad()
+              break
+            }
           }
-        }
-      },
-      // 进入视口前 300px 即触发
-      { rootMargin: '300px 0px', threshold: 0 },
-    )
-    if (el)
-      observer.observe(el)
-    onCleanup(() => observer.disconnect())
+        },
+        // 进入视口前 300px 即触发
+        { rootMargin: '300px 0px', threshold: 0 },
+      )
+      if (el)
+        observer.observe(el)
+      onCleanup(() => observer?.disconnect())
+    })
   })
 
   const bgMinimg = () => {

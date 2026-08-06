@@ -15,6 +15,8 @@ export default function PhotoAlbum() {
   let move = false
   const navigator = useNavigate()
   let slider: KeenSliderInstance
+  // 提升到组件作用域，便于 onCleanup 清理 autoplay
+  let autoPlayTimeout: string | number | NodeJS.Timeout | undefined
 
   let sBox: HTMLDivElement
   let sBoxItem: HTMLDivElement
@@ -72,6 +74,9 @@ export default function PhotoAlbum() {
     ])
   })
   onCleanup(() => {
+    // 清理 autoplay timeout，避免组件卸载后 slider.next() 访问已销毁实例崩溃
+    const shared = slider?.container as HTMLElement & { __eranAutoplayTimeout?: string | number | NodeJS.Timeout } | undefined
+    clearTimeout(shared?.__eranAutoplayTimeout)
     slider && slider.destroy()
   })
   return (
@@ -177,21 +182,35 @@ export default function PhotoAlbum() {
   )
 }
 /** 自动播放 */
-function KSautoPlayFn(slider: any) {
+function KSautoPlayFn(slider: any, _options?: any, _name?: string) {
+  // 从容器实例读取共享 timeout（由组件 onCleanup 清理）
+  const shared = slider.container as HTMLElement & { __eranAutoplayTimeout?: string | number | NodeJS.Timeout }
   let timeout: string | number | NodeJS.Timeout | undefined
   let mouseOver = false
   function clearNextTimeout() {
     clearTimeout(timeout)
+    if (shared)
+      shared.__eranAutoplayTimeout = undefined
   }
   function nextTimeout() {
     clearTimeout(timeout)
     if (mouseOver)
       return
     timeout = setTimeout(() => {
-      slider?.next()
+      try {
+        slider?.next()
+      }
+      catch {
+        /* slider 已销毁 */
+      }
     }, 4000)
+    if (shared)
+      shared.__eranAutoplayTimeout = timeout
   }
   slider.on('created', () => {
+    // 同步现有 timeout 引用（组件已定义 autoPlayTimeout 时使用它）
+    if (shared && shared.__eranAutoplayTimeout)
+      timeout = shared.__eranAutoplayTimeout
     slider.container.addEventListener('mouseover', () => {
       mouseOver = true
       clearNextTimeout()

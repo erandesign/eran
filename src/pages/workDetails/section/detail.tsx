@@ -9,6 +9,7 @@ import SeoMeta from '~/components/SeoMeta'
 import { WorkJsonLd } from '~/components/JsonLd'
 import { getPublicWorkById, getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
+import Lightbox from '~/components/Lightbox'
 /**  */
 export default function Detail() {
   const param = useParams()
@@ -98,6 +99,8 @@ export default function Detail() {
           {/* <div class="">{JSON.stringify(data())}</div> */}
         </Show>
       </ErrorBoundary>
+      {/* 图片灯箱：点击详情页图片放大查看 */}
+      <Lightbox />
     </div>
   )
 };

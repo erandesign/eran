@@ -51,9 +51,9 @@ export default function WorkList() {
                       i18n={i18n.subTitles()[i18n.subTitles({}, { lang: 'zh' }).findIndex(f => f === item.type)]}
                     />
                   </div>
-                  <A href={`../work/${item.id}`}>
+                  <A href={`../work/${item.id}`} class="group relative block overflow-hidden">
                     <Image
-                      class="w-full object-cover object-center"
+                      class="w-full object-cover object-center transition-transform-500 group-hover:scale-105"
                       classList={{
                         'h-630': i() % n === 0 || i() % n === 3,
                         'h-636': i() % n === 1 || i() % n === 2,
@@ -63,6 +63,10 @@ export default function WorkList() {
                       alt={item.name}
                       loading="lazy"
                     />
+                    {/* hover 提示层 */}
+                    <div class="pointer-events-none absolute inset-0 flex items-end bg-black/0 p-30 opacity-0 transition-all-500 group-hover:bg-black/25 group-hover:opacity-100">
+                      <span class="text-14 tracking-4 text-white" lang-en="tracking-1">查看详情</span>
+                    </div>
                   </A>
                 </div>
               )}
