@@ -26,6 +26,47 @@ export default defineConfig({
         prerender: {
           routes: ['/'].concat(langs, routes.map(v => langs.map(l => l + v)).flat(1)),
         },
+        // 静态资源缓存策略（透传给 Nitro routeRules）
+        routeRules: {
+          // 构建产物带哈希，永久缓存（内置已有，显式声明）
+          '/_build/assets/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=31536000, immutable',
+            },
+          },
+          // 图片/视频/字体：7 天缓存
+          '/images/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=604800',
+            },
+          },
+          '/video/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=604800',
+            },
+          },
+          '/font/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=604800',
+            },
+          },
+          '/favicon.ico': {
+            headers: {
+              'Cache-Control': 'public, max-age=604800',
+            },
+          },
+          // 页面 HTML：60s 短缓存
+          '/zh/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=60',
+            },
+          },
+          '/en/**': {
+            headers: {
+              'Cache-Control': 'public, max-age=60',
+            },
+          },
+        },
       }
     : undefined,
   experimental: {
