@@ -63,6 +63,9 @@
       "@solidjs/start": "$@solidjs/start",
       "solid-js": "$solid-js",
       "vinxi": "$vinxi"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
   }
 }
