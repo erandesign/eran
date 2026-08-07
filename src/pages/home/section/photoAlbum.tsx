@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@solidjs/router'
 import type { KeenSliderInstance, KeenSliderPlugin } from 'keen-slider'
 import KeenSlider from 'keen-slider'
-import { For, Suspense, createEffect, createResource, createSignal, onCleanup, onMount } from 'solid-js'
+import { For, Show, Suspense, createEffect, createMemo, createResource, createSignal, onCleanup, onMount } from 'solid-js'
 import { isServer } from 'solid-js/web'
 import Image from '~/components/Image'
 import Link from '~/components/Link'
@@ -15,17 +15,34 @@ export default function PhotoAlbum() {
   let move = false
   const navigator = useNavigate()
   let slider: KeenSliderInstance
-  // 提升到组件作用域，便于 onCleanup 清理 autoplay
-  let autoPlayTimeout: string | number | NodeJS.Timeout | undefined
+  // autoplay 定时器引用（供 onCleanup 清理）
+  let autoPlayTimer: ReturnType<typeof setTimeout> | undefined
 
   let sBox: HTMLDivElement
   let sBoxItem: HTMLDivElement
 
   const [sNum, setSNum] = createSignal(0)
   const param = useParams()
-  const [data] = createResource(() => ({ lang: param.lang, type: i18n.subTitles({}, { lang: 'zh' })[sNum()] }), getAllWorks)
+  // 一次性加载全部公开作品（type=''），切换 tab 时纯前端过滤，避免 server-fn 431
+  const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
+  // 按当前 tab 类型过滤
+  const data = createMemo(() => {
+    const type = i18n.subTitles({}, { lang: 'zh' })[sNum()]
+    return (allData() || []).filter(v => v.type === type)
+  })
+
+  // tab 切换或数据变化时更新 slider（数据就绪后）
   createEffect(() => {
-    if (data()?.length) { slider?.update() }
+    const list = data()
+    if (list.length && slider) {
+      // 延迟到 DOM 更新后 update（数量变化时 keen-slider 需要重建 slides）
+      queueMicrotask(() => {
+        if (slider) {
+          slider.update()
+          slider.moveToIdx(0)
+        }
+      })
+    }
   })
 
   const sLen = () => sBox.clientWidth - sBoxItem.clientWidth
@@ -52,6 +69,54 @@ export default function PhotoAlbum() {
       })
     })
   }
+
+  /**
+   * 柔和自然自动滚动：
+   * - 平滑滑动到下一张（2s 缓动，easeOutCubic 减速自然）
+   * - 停留 3.5s 后继续
+   * - 悬停/拖拽时暂停，离开后恢复
+   */
+  const autoplay = (target: KeenSliderInstance) => {
+    let paused = false
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
+
+    const scheduleNext = () => {
+      clearTimeout(autoPlayTimer)
+      if (paused || target.track.details.length <= 1)
+        return
+      autoPlayTimer = setTimeout(() => {
+        const current = target.track.details.relativeSlide
+        const next = (current + 1) % Math.max(target.track.details.length, 1)
+        // 平滑滑动：2s 缓动 + 自然的减速
+        target.moveToIdx(next, false, { duration: 2000, easing: easeOutCubic })
+        scheduleNext()
+      }, 3500)
+    }
+
+    target.on('created', () => {
+      target.container.addEventListener('mouseenter', () => {
+        paused = true
+        clearTimeout(autoPlayTimer)
+      })
+      target.container.addEventListener('mouseleave', () => {
+        paused = false
+        scheduleNext()
+      })
+      scheduleNext()
+    })
+    target.on('dragStarted', () => {
+      paused = true
+      clearTimeout(autoPlayTimer)
+    })
+    target.on('dragEnded', () => {
+      paused = false
+      scheduleNext()
+    })
+    target.on('destroyed', () => {
+      clearTimeout(autoPlayTimer)
+    })
+  }
+
   onMount(() => {
     if (isServer && !document.querySelector('#my-keen-slider')?.lastChild) {
       return
@@ -70,13 +135,11 @@ export default function PhotoAlbum() {
     }, [
       carousel,
       // WheelControls,
-      KSautoPlayFn,
+      autoplay,
     ])
   })
   onCleanup(() => {
-    // 清理 autoplay timeout，避免组件卸载后 slider.next() 访问已销毁实例崩溃
-    const shared = slider?.container as HTMLElement & { __eranAutoplayTimeout?: string | number | NodeJS.Timeout } | undefined
-    clearTimeout(shared?.__eranAutoplayTimeout)
+    clearTimeout(autoPlayTimer)
     slider && slider.destroy()
   })
   return (
@@ -89,42 +152,51 @@ export default function PhotoAlbum() {
           class="keen-slider [--item-op:0.2] h-666 w-auto flex-c/i flex-row transform-preserve-3d"
         >
           <Suspense>
-            <For each={data() || []}>
-              {(item) => {
-                return (
-                  <div
-                    class="keen-slider__slide h-666 w-1080 f-c/c shrink-0 cursor-pointer bg-white/10 opacity-[--item-op] [&:hover_.main]:opacity-100 hover:[--item-op:1]!"
-                    onMouseDown={() => { mouseDowm = true }}
-                    onMouseMove={() => { if (mouseDowm) { move = true } }}
-                    onClick={() => {
-                      mouseDowm = false
-                      if (move) {
-                        move = false
-                      }
-                      else {
-                        navigator(`work/${item.id}`)
-                      }
-                    }}
-                  >
-                    <div class="keen-slider__slidemain relative s-full f-c/c">
-                      <Image class="s-full select-none object-cover" draggable="false" src={item.cover} />
-                      <div
-                        class="main absolute s-full f-s/e flex-col px-30 py-43 op-0 transition-all"
-                        style={{
-                          cursor: `url('/images/cursor_goto_white.svg'),auto`,
-                        }}
-                      >
-                        <span class="mb-8 text-14 text-white">查看详情</span>
-                        <div class="flex flex-col b-0 b-t-1 b-white b-solid py-12">
-                          <span class="text-20 text-white">{item.name}</span>
-                          <span class="text-14 text-white">{item.address}</span>
+            <Show
+              when={data().length}
+              fallback={(
+                <div class="flex h-666 w-full items-center justify-center text-16 tracking-5 text-white/40">
+                  <span>暂无该类型作品</span>
+                </div>
+              )}
+            >
+              <For each={data()}>
+                {(item) => {
+                  return (
+                    <div
+                      class="keen-slider__slide h-666 w-1080 f-c/c shrink-0 cursor-pointer bg-white/10 opacity-[--item-op] [&:hover_.main]:opacity-100 hover:[--item-op:1]!"
+                      onMouseDown={() => { mouseDowm = true }}
+                      onMouseMove={() => { if (mouseDowm) { move = true } }}
+                      onClick={() => {
+                        mouseDowm = false
+                        if (move) {
+                          move = false
+                        }
+                        else {
+                          navigator(`work/${item.id}`)
+                        }
+                      }}
+                    >
+                      <div class="keen-slider__slidemain relative s-full f-c/c">
+                        <Image class="s-full select-none object-cover" draggable="false" src={item.cover} />
+                        <div
+                          class="main absolute s-full f-s/e flex-col px-30 py-43 op-0 transition-all"
+                          style={{
+                            cursor: `url('/images/cursor_goto_white.svg'),auto`,
+                          }}
+                        >
+                          <span class="mb-8 text-14 text-white">查看详情</span>
+                          <div class="flex flex-col b-0 b-t-1 b-white b-solid py-12">
+                            <span class="text-20 text-white">{item.name}</span>
+                            <span class="text-14 text-white">{item.address}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )
-              }}
-            </For>
+                  )
+                }}
+              </For>
+            </Show>
           </Suspense>
 
         </div>
@@ -181,9 +253,8 @@ export default function PhotoAlbum() {
     </div>
   )
 }
-/** 自动播放 */
+/** 自动播放（保留旧插件名导出以兼容） */
 function KSautoPlayFn(slider: any, _options?: any, _name?: string) {
-  // 从容器实例读取共享 timeout（由组件 onCleanup 清理）
   const shared = slider.container as HTMLElement & { __eranAutoplayTimeout?: string | number | NodeJS.Timeout }
   let timeout: string | number | NodeJS.Timeout | undefined
   let mouseOver = false
@@ -208,7 +279,6 @@ function KSautoPlayFn(slider: any, _options?: any, _name?: string) {
       shared.__eranAutoplayTimeout = timeout
   }
   slider.on('created', () => {
-    // 同步现有 timeout 引用（组件已定义 autoPlayTimeout 时使用它）
     if (shared && shared.__eranAutoplayTimeout)
       timeout = shared.__eranAutoplayTimeout
     slider.container.addEventListener('mouseover', () => {
