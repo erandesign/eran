@@ -17,34 +17,37 @@ export default createHandler(() => {
             />
             <link rel="icon" href="/favicon.ico" />
             <link rel="stylesheet" href="/font/LXGWFasmartGothic/font.css" />
-            {/* 移动端覆盖：修复 autoRem 在窄屏下字号过度压缩 + 间距溢出 */}
+            {/* 移动端覆盖：响应式字号 + 排版适配 */}
             <style>{`
-              /* 移动端：--rem 保持 20px（间距合理），关键字号显式放大 */
               @media (max-width: 768px) {
+                /* --rem 随视口宽度平滑缩放（350px→14px, 768px→26px），间距/字号同步响应 */
                 html {
-                  font-size: 20px !important;
-                  --rem: 20px !important;
+                  font-size: clamp(14px, 3.8vw, 26px) !important;
+                  --rem: clamp(14px, 3.8vw, 26px) !important;
+                }
+                body {
+                  font-size: clamp(12px, 3.2vw, 15px) !important;
                 }
                 /* 网格列间隙收窄，防止 14 列溢出 */
-                .e-grid { column-gap: 0.6rem !important; }
+                .e-grid { column-gap: clamp(6px, 1.6vw, 12px) !important; }
                 .grid-cols-14 { grid-template-columns: repeat(14, minmax(0, 1fr)) !important; }
-                /* 关键字号在移动端显式放大到可读 */
-                .text-72 { font-size: 2rem !important; line-height: 1.25 !important; letter-spacing: 0.12em !important; }
-                .text-60 { font-size: 1.8rem !important; line-height: 1.25 !important; letter-spacing: 0.1em !important; }
-                .text-32 { font-size: 1.4rem !important; line-height: 1.3 !important; }
-                .text-30 { font-size: 1.4rem !important; line-height: 1.3 !important; }
-                .text-24 { font-size: 1.2rem !important; }
-                .text-20 { font-size: 1.1rem !important; }
+                /* 关键字号：视口响应式（小屏小、大屏大），相对 html 基准 */
+                .text-72 { font-size: 1.9rem !important; line-height: 1.25 !important; letter-spacing: 0.1em !important; }
+                .text-60 { font-size: 1.7rem !important; line-height: 1.25 !important; letter-spacing: 0.08em !important; }
+                .text-32 { font-size: 1.35rem !important; line-height: 1.3 !important; }
+                .text-30 { font-size: 1.35rem !important; line-height: 1.3 !important; }
+                .text-24 { font-size: 1.15rem !important; }
+                .text-20 { font-size: 1.05rem !important; }
                 .text-16 { font-size: 0.9rem !important; }
-                .text-14 { font-size: 0.8rem !important; }
-                .text-12 { font-size: 0.7rem !important; }
+                .text-14 { font-size: 0.82rem !important; }
+                .text-12 { font-size: 0.72rem !important; }
                 .leading-94 { line-height: 1.25 !important; }
                 /* 导航：移动端紧凑布局 */
                 #cover-nav-main { grid-template-columns: auto 1fr auto !important; padding: 0 0.4rem !important; }
                 #cover-nav { gap: 0.6rem !important; padding: 0 0.6rem !important; }
                 #cover-logo-x { margin-right: 0.6rem !important; }
                 /* 关键布局间距在移动端收窄，避免横向溢出 */
-                .px-150 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .px-150 { padding-left: 1.1rem !important; padding-right: 1.1rem !important; }
                 .px-120 { padding-left: 0.6rem !important; padding-right: 0.6rem !important; }
                 .px-56  { padding-left: 1rem !important; padding-right: 1rem !important; }
                 .gap-120 { gap: 1rem !important; }
@@ -75,7 +78,7 @@ export default createHandler(() => {
                 /* footer/其他溢出元素兜底 */
                 .text-oneline { white-space: normal !important; }
                 /* 首页 slogan 高度适配 */
-                #home-slogan { height: 22rem !important; }
+                #home-slogan { height: 24rem !important; }
                 body { overflow-x: hidden !important; }
               }
             `}</style>

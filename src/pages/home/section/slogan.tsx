@@ -1,67 +1,68 @@
 import { onCleanup, onMount } from 'solid-js'
 import { I18n, i18n } from '~/components/i18n'
+import { ScrollTrigger, gsap } from '~/utils/gsap'
 
-/** 口号：滚动进入视口时，文字依行放大再缩回正常（一次性动画） */
+/**
+ * 口号：滚动驱动动画
+ * - 鼠标滚轮滚动时，文字随滚动进度实时放大（到 1.2）再缩回正常
+ * - 每行依次错开（行 0 先动，行 3 后动），形成波浪层次
+ * - scrub 模式：滚轮位置决定放大程度，回滚即还原
+ */
 export default function Slogan() {
   onMount(() => {
+    if (typeof window === 'undefined')
+      return
     const section = document.getElementById('home-slogan')
     if (!section)
       return
-    const rows = Array.from(section.querySelectorAll<HTMLElement>('.home-slogan-row'))
+    const rows = section.querySelectorAll<HTMLElement>('.home-slogan-row')
+    if (!rows.length)
+      return
 
-    // 观察区块进入视口：触发一次逐行 放大→缩小 动画
-    let triggered = false
-    const trigger = () => {
-      if (triggered)
-        return
-      triggered = true
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      // 每行错开 0.15 的起始偏移，形成依次放大的层次
       rows.forEach((row, i) => {
-        // 每行依次错开 0.15s 开始，动画 1s（放大到1.2再缩回1）
-        row.style.animation = `slogan-pulse 1s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.15}s both`
+        gsap.fromTo(
+          row,
+          { scale: 1 },
+          {
+            scale: 1.2,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 90%',
+              end: 'center 40%',
+              scrub: 0.8, // 滚动驱动，平滑跟随
+            },
+          },
+        )
+        // 回落到正常（后段）
+        gsap.fromTo(
+          row,
+          { scale: 1.2 },
+          {
+            scale: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: section,
+              start: 'center 40%',
+              end: 'bottom 10%',
+              scrub: 0.8,
+            },
+          },
+        )
       })
-    }
+    }, section)
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            observer.disconnect()
-            trigger()
-            break
-          }
-        }
-      },
-      { threshold: 0.2 },
-    )
-    observer.observe(section)
-
-    // 兜底：滚动到 slogan 附近时触发（兼容 IO 失效场景）
-    const onScroll = () => {
-      const rect = section.getBoundingClientRect()
-      const vh = window.innerHeight || document.documentElement.clientHeight
-      if (rect.top < vh * 0.85 && rect.bottom > 0) {
-        window.removeEventListener('scroll', onScroll)
-        observer.disconnect()
-        trigger()
-      }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
     onCleanup(() => {
-      observer.disconnect()
-      window.removeEventListener('scroll', onScroll)
+      ctx.revert()
     })
   })
 
   return (
     <div class="h-600 w-full bg-black" id="home-slogan">
-      {/* keyframes 注入一次（SSR 安全：只影响客户端） */}
-      <style>{`
-        @keyframes slogan-pulse {
-          0%   { transform: scale(1); }
-          50%  { transform: scale(1.2); }
-          100% { transform: scale(1); }
-        }
-      `}</style>
       <img class="absolute right-130 top-150 z-11 w-12" src="/images/logo_side.svg" />
 
       <h2
