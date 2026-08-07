@@ -12,7 +12,12 @@ function initTheme() {
     const root = document.querySelector<HTMLElement>('html')
     root?.classList.toggle('dark', isDark)
     root?.classList.toggle('light', !isDark)
-    setTheme(isDark ? 'dark' : 'light')
+    try {
+      setTheme(isDark ? 'dark' : 'light')
+    }
+    catch {
+      /* signal 尚未就绪时忽略 */
+    }
   }
 
   if (stored) {
@@ -33,7 +38,23 @@ function initTheme() {
   }
 }
 
-// 在水合前同步设置（避免闪烁），mount 后执行完整逻辑
-initTheme()
+// 先 mount 再初始化（确保 SolidJS signal 可用），同时水合前用原生方式预置 class 防闪烁
+if (typeof document !== 'undefined') {
+  // 水合前快速设置（同步，防闪烁）
+  try {
+    const stored = localStorage.getItem('darkTheme')
+    const isDark = stored
+      ? stored === 'true' || stored === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches
+    document.querySelector('html')?.classList.toggle('dark', isDark)
+    document.querySelector('html')?.classList.toggle('light', !isDark)
+  }
+  catch {
+    /* ignore */
+  }
+}
 
 mount(() => <StartClient />, document.getElementById('app')!)
+
+// mount 后执行完整逻辑（含系统变化监听）
+setTimeout(() => initTheme(), 0)

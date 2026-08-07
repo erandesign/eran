@@ -69,8 +69,14 @@ export default createHandler(() => {
                 .tracking-8  { letter-spacing: 0.12em !important; }
                 .tracking-7  { letter-spacing: 0.12em !important; }
                 .tracking-5  { letter-spacing: 0.1em !important; }
+                /* 分类 tab 在移动端可换行/滚动 */
+                .col-1\\/span9 { flex-wrap: wrap !important; gap: 0.5rem !important; }
+                .f-c\\/sb { flex-wrap: wrap !important; }
+                /* footer/其他溢出元素兜底 */
+                .text-oneline { white-space: normal !important; }
                 /* 首页 slogan 高度适配 */
                 #home-slogan { height: 22rem !important; }
+                body { overflow-x: hidden !important; }
               }
             `}</style>
             {assets}
