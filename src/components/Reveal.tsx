@@ -59,9 +59,19 @@ export default function Reveal(props: RevealProps) {
     // 环境不支持：保持可见
     if (typeof IntersectionObserver === 'undefined')
       return
-    // 先隐藏（onMount 在浏览器 paint 前同步执行，无 1→0 过渡闪烁）
+
+    // 同步隐藏（onMount 在浏览器 paint 前执行，SSR opacity:1 → 隐藏无过渡闪烁）
     setVisible(false)
 
+    // 首屏视口内卡片：立即按批次依次出现（同一帧内错开淡入）
+    const rect = el.getBoundingClientRect()
+    const vh = window.innerHeight || document.documentElement.clientHeight
+    if (rect.top < vh && rect.bottom > 0) {
+      reveal()
+      return
+    }
+
+    // 视口外卡片：滚动进入时依次淡入
     observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
