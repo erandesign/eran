@@ -4,6 +4,7 @@ import { getCurrType } from './header'
 import { I18n, i18n } from '~/components/i18n'
 import { getAllWorks } from '~/serverAction/works'
 import Image from '~/components/Image'
+import Reveal from '~/components/Reveal'
 
 const n = 5
 /** 作品列表 */
@@ -18,7 +19,7 @@ export default function WorkList() {
           <Show when={data()?.length} fallback={<I18n i18n={i18n.noData} class="col-span-full h-full f-c/c text-16 text-gray" />}>
             <For each={data() || []}>
               {(item, i) => (
-                <div classList={{
+                <Reveal classList={{
                   'col-1/span9 mt-350': i() % n === 0,
                   'col-span4/-1 mt-132': i() % n === 1,
                   'col-1/span4 mt-132': i() % n === 2,
@@ -68,7 +69,7 @@ export default function WorkList() {
                       <span class="text-14 tracking-4 text-white" lang-en="tracking-1">查看详情</span>
                     </div>
                   </A>
-                </div>
+                </Reveal>
               )}
             </For>
           </Show>

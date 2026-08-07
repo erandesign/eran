@@ -10,6 +10,7 @@ import { WorkJsonLd } from '~/components/JsonLd'
 import { getPublicWorkById, getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
 import Lightbox from '~/components/Lightbox'
+import Reveal from '~/components/Reveal'
 /**  */
 export default function Detail() {
   const param = useParams()
@@ -86,10 +87,14 @@ export default function Detail() {
           {/* 内容 */}
           <div class="flex flex-col gap-150">
             <For each={data()?.content || []}>
-              {(item) => {
+              {(item, i) => {
                 const Ele = contentTypeMap[item.type]
                 if (Ele)
-                  return <Dynamic component={Ele}{...item} />
+                  return (
+                    <Reveal delayStep={120}>
+                      <Dynamic component={Ele}{...item} />
+                    </Reveal>
+                  )
 
                 return null
               }}
