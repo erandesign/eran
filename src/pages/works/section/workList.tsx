@@ -1,6 +1,5 @@
-import { A, useParams } from '@solidjs/router'
-import { ErrorBoundary, For, Show, Suspense, createEffect, createResource } from 'solid-js'
-import { getCurrType } from './header'
+import { A, useParams, useSearchParams } from '@solidjs/router'
+import { ErrorBoundary, For, Show, Suspense, createMemo, createResource } from 'solid-js'
 import { I18n, i18n } from '~/components/i18n'
 import { getAllWorks } from '~/serverAction/works'
 import Image from '~/components/Image'
@@ -10,14 +9,22 @@ const n = 5
 /** 作品列表 */
 export default function WorkList() {
   const param = useParams()
-  const [data] = createResource(() => ({ lang: param.lang, type: getCurrType() }), getAllWorks)
+  const [params] = useSearchParams()
+  // 一次性加载全部公开作品（type=''），分类切换纯前端过滤，避免 server-fn 431 卡顿
+  const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
+  // 按 URL type 参数前端过滤（空 = 全部）
+  const data = createMemo(() => {
+    const t = typeof params.type === 'string' ? params.type : ''
+    const list = allData() || []
+    return t ? list.filter(v => v.type === t) : list
+  })
 
   return (
     <div class="grid grid-cols-14 min-h-80vh px-150 pb-172">
       <ErrorBoundary fallback="error">
         <Suspense fallback="">
-          <Show when={data()?.length} fallback={<I18n i18n={i18n.noData} class="col-span-full h-full f-c/c text-16 text-gray" />}>
-            <For each={data() || []}>
+          <Show when={data().length} fallback={<I18n i18n={i18n.noData} class="col-span-full h-full f-c/c text-16 text-gray" />}>
+            <For each={data()}>
               {(item, i) => (
                 <Reveal classList={{
                   'col-1/span9 mt-350': i() % n === 0,

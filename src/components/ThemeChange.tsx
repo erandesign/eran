@@ -4,6 +4,9 @@ import { createEffect, createSignal, onMount } from 'solid-js'
 const themeKey = 'darkTheme'
 export const [theme, setTheme] = createSignal<string>(typeof localStorage !== 'undefined' ? localStorage.getItem(themeKey)! : '')
 
+/** 用户是否手动点过切换（自动匹配系统时不视为手动选择） */
+let userManuallyPicked = false
+
 /** 主题切换 */
 export function ThemeChange(props: { class?: string }) {
   const root = () => document.querySelector<HTMLElement>('html')
@@ -18,21 +21,38 @@ export function ThemeChange(props: { class?: string }) {
     root()?.classList.add('light')
   }
   createEffect(() => {
-    localStorage.setItem(themeKey, String(theme()))
+    // 只在用户手动选择时持久化（自动匹配系统时不写入，保持跟随系统）
+    if (userManuallyPicked && (theme() === 'dark' || theme() === 'light'))
+      localStorage.setItem(themeKey, theme())
   })
   onMount(() => {
-    const darkTheme = theme()
-    let isDark = darkTheme === 'true' || darkTheme === 'dark'
-    if (theme() === '')
-      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const stored = localStorage.getItem(themeKey)
+    // 有存储 → 用户之前手动选过；无存储 → 跟随系统
+    if (stored) {
+      userManuallyPicked = true
+      const isDark = stored === 'true' || stored === 'dark'
+      isDark ? toDark() : toLight()
+    }
+    else {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      isDark ? toDark() : toLight()
+    }
 
-    isDark ? toDark() : toLight()
+    // 监听系统主题变化：仅当用户未手动选择时自动跟随
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = (e: MediaQueryListEvent) => {
+      if (!userManuallyPicked)
+        (e.matches ? toDark : toLight)()
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
   })
 
   return (
     <div
       class={`col-span2/-1 h-46 w-120 ${props.class}`}
       onClick={() => {
+        userManuallyPicked = true
         if (theme() === 'dark')
           toLight()
         else toDark()
