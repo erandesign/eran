@@ -57,7 +57,31 @@ export default createHandler(() => {
                 .ml-614 { margin-left: 0 !important; }
                 .w-1220 { width: 100% !important; }
                 .w-166  { width: 2rem !important; }
-                .h-1080 { height: 13rem !important; }
+                /* 固定宽度容器在移动端自适应 */
+                .w-670 { width: 100% !important; }
+                .w-1030 { width: 100% !important; }
+                .w-825 { width: 100% !important; }
+                .w-600 { width: 100% !important; }
+                .w-560 { width: 100% !important; }
+                .w-315 { width: 100% !important; }
+                .w-325 { width: 100% !important; }
+                .w-460 { width: 100% !important; }
+                /* 大图在移动端保持比例（宽满、高自动） */
+                .h-600 { height: auto !important; }
+                .h-465 { height: auto !important; }
+                .h-315 { height: auto !important; }
+                .h-250 { height: auto !important; }
+                /* about/founder 两端布局移动端改为纵向堆叠 */
+                .f-e\\/sb { flex-direction: column !important; align-items: stretch !important; }
+                .f-e\\/s { flex-direction: column !important; }
+                .gap-115 { gap: 1rem !important; }
+                .gap-120 { gap: 1rem !important; }
+                .pt-300 { padding-top: 2rem !important; }
+                .pt-120 { padding-top: 1.5rem !important; }
+                .pt-80 { padding-top: 1rem !important; }
+                .pb-164 { padding-bottom: 2rem !important; }
+                .pb-80 { padding-bottom: 1rem !important; }
+                .h-1080 { height: 100vh !important; }
                 .my-132 { margin-top: 1rem !important; margin-bottom: 1rem !important; }
                 .mt-350 { margin-top: 2rem !important; }
                 .mt-132 { margin-top: 1rem !important; }
