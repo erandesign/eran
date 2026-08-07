@@ -30,8 +30,8 @@ export default function Slogan() {
       const progress = Math.min(Math.max((vh - rect.top) / total, 0), 1)
 
       rows.forEach((row, i) => {
-        // 每行错开 0.2 相位（行0先动，行3最后），形成明显的逐行放大
-        const p = Math.min(Math.max((progress - i * 0.2) / 0.6, 0), 1)
+        // 每行错开 0.15 相位（行0先动，行3最后），逐行依次放大
+        const p = Math.min(Math.max((progress - i * 0.15) / 0.55, 0), 1)
         const scale = 1 + 0.25 * Math.sin(p * Math.PI)
         row.style.transform = `scale(${scale.toFixed(4)})`
         row.style.transformOrigin = 'center center'
