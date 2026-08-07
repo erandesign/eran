@@ -10,23 +10,46 @@ export default function Slogan() {
     const rows = Array.from(section.querySelectorAll<HTMLElement>('.home-slogan-row'))
 
     // 观察区块进入视口：触发一次逐行 放大→缩小 动画
+    let triggered = false
+    const trigger = () => {
+      if (triggered)
+        return
+      triggered = true
+      rows.forEach((row, i) => {
+        // 每行依次错开 0.15s 开始，动画 1s（放大到1.2再缩回1）
+        row.style.animation = `slogan-pulse 1s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.15}s both`
+      })
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             observer.disconnect()
-            rows.forEach((row, i) => {
-              // 每行依次错开 0.15s 开始，动画 1s（放大到1.2再缩回1）
-              row.style.animation = `slogan-pulse 1s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.15}s both`
-            })
+            trigger()
             break
           }
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.2 },
     )
     observer.observe(section)
-    onCleanup(() => observer.disconnect())
+
+    // 兜底：滚动到 slogan 附近时触发（兼容 IO 失效场景）
+    const onScroll = () => {
+      const rect = section.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      if (rect.top < vh * 0.85 && rect.bottom > 0) {
+        window.removeEventListener('scroll', onScroll)
+        observer.disconnect()
+        trigger()
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onCleanup(() => {
+      observer.disconnect()
+      window.removeEventListener('scroll', onScroll)
+    })
   })
 
   return (
