@@ -1,4 +1,3 @@
-import { onMount } from 'solid-js'
 import Cover from './section/cover'
 import FirstIn from './section/firstIn'
 import PhotoAlbum from './section/photoAlbum'
@@ -11,19 +10,9 @@ import SeoMeta from '~/components/SeoMeta'
 import { OrganizationJsonLd } from '~/components/JsonLd'
 import Concat from '~/components/concatBlock/concatBlock'
 import Footer2top from '~/components/Footer2top'
-import { setTheme } from '~/components/ThemeChange'
 
 /** 首页 */
 export default function Home() {
-  onMount(() => {
-    setTimeout(() => {
-      const root = document.querySelector<HTMLElement>('html')!
-      // root?.classList.remove('light')
-      root?.classList.remove('dark')
-      root?.classList.add('light')
-      setTheme('light')
-    }, 16)
-  })
   return (
     <>
       <SiteTitle>{i18n.title_home()}</SiteTitle>
