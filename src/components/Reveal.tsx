@@ -11,6 +11,8 @@ interface RevealProps {
   delayStep?: number
   /** 一批结束后的空闲重置时间 ms（默认 400） */
   resetIdle?: number
+  /** IntersectionObserver threshold（默认 0.05，巨幅卡片更早触发） */
+  threshold?: number
 }
 
 // 全局批次计数器 + 空闲重置定时器（跨所有卡片实例共享）
@@ -19,20 +21,22 @@ let resetTimer: ReturnType<typeof setTimeout> | undefined
 
 /**
  * 依次出现动画（滚动入场）：
- * - IntersectionObserver 监听（threshold 0.2）
+ * - IntersectionObserver 监听（threshold 0.05）
  * - 同一批触发元素按触发顺序设置 transition-delay（0.15s 递增，全局计数器）
  * - 400ms 内无新元素触发则重置计数器，下一批滚动进来的元素从头错开
  * - opacity 0 + translateY(40px) → 1 + 0，cubic-bezier(0.16,1,0.3,1)，0.8s，一次性
+ * - SSR 输出可见（SEO 完整）；客户端水合后无过渡隐藏，再依次淡入（无闪烁）
  * - 保留现有 class/classList 透传（不破坏 col-* 网格定位）
  */
 export default function Reveal(props: RevealProps) {
-  const [local, rest] = splitProps(props, ['children', 'delayStep', 'resetIdle', 'class', 'classList'])
+  const [local, rest] = splitProps(props, ['children', 'delayStep', 'resetIdle', 'threshold', 'class', 'classList'])
   const [visible, setVisible] = createSignal(true)
   let el: HTMLDivElement | undefined
   let observer: IntersectionObserver | undefined
 
   const delayStep = props.delayStep ?? 150
   const resetIdle = props.resetIdle ?? 400
+  const threshold = props.threshold ?? 0.05
 
   const resetBatch = () => {
     clearTimeout(resetTimer)
@@ -55,7 +59,7 @@ export default function Reveal(props: RevealProps) {
     // 环境不支持：保持可见
     if (typeof IntersectionObserver === 'undefined')
       return
-    // 先隐藏（浏览器尚未 paint，用户看不到闪变），再依次淡入
+    // 先隐藏（onMount 在浏览器 paint 前同步执行，无 1→0 过渡闪烁）
     setVisible(false)
 
     observer = new IntersectionObserver(
@@ -67,7 +71,7 @@ export default function Reveal(props: RevealProps) {
           }
         }
       },
-      { threshold: 0.2 },
+      { threshold },
     )
     observer.observe(el)
     onCleanup(() => {
