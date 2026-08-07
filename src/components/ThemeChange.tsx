@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js'
-import { createEffect, createSignal, onMount } from 'solid-js'
+import { createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 
 const themeKey = 'darkTheme'
 // 初始值：仅客户端读取 localStorage，否则 ''
@@ -40,16 +40,18 @@ export function ThemeChange(props: { class?: string }) {
       const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
       isDark ? toDark() : toLight()
     }
+  })
 
-    // 监听系统主题变化：仅当用户未手动选择时自动跟随
+  // 监听系统主题变化：仅当用户未手动选择时自动跟随
+  if (typeof window !== 'undefined') {
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
     const onChange = (e: MediaQueryListEvent) => {
       if (!userManuallyPicked)
         (e.matches ? toDark : toLight)()
     }
     mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  })
+    onCleanup(() => mq.removeEventListener('change', onChange))
+  }
 
   return (
     <div
@@ -64,12 +66,6 @@ export function ThemeChange(props: { class?: string }) {
       <img class="s-full" src={theme() === 'dark' ? '/images/switch_moon.svg' : '/images/switchh_sun.svg'} draggable={false} />
     </div>
   )
-  // return (
-  //   <div class="grid-c/c col-span2/-1 grid-cols-2 h-46 w-120 rd-full bg-#F2F2F2 px-5" dark="bg-#111">
-  //     <div class="h-36 w-61 f-c/c cursor-pointer rd-full" light="bg-white" onClick={toLight}>🌞</div>
-  //     <div class="h-36 w-61 f-c/c cursor-pointer rd-full" dark="bg-white" onClick={toDark}>🌛</div>
-  //   </div>
-  // )
 };
 
 // #region 自动设置主题

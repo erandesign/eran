@@ -1,4 +1,4 @@
-import { onMount } from 'solid-js'
+import { onCleanup, onMount } from 'solid-js'
 import { I18n, i18n } from '~/components/i18n'
 
 /** 口号：滚动进入视口时，文字依行放大再缩回正常（一次性动画） */
@@ -26,7 +26,7 @@ export default function Slogan() {
       { threshold: 0.3 },
     )
     observer.observe(section)
-    return () => observer.disconnect()
+    onCleanup(() => observer.disconnect())
   })
 
   return (
