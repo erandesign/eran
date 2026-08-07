@@ -75,6 +75,13 @@ export default createHandler(() => {
                 /* 分类 tab 在移动端可换行/滚动 */
                 .col-1\\/span9 { flex-wrap: wrap !important; gap: 0.5rem !important; }
                 .f-c\\/sb { flex-wrap: wrap !important; }
+                /* 作品卡片在移动端改为单列堆叠（避免三列最小宽度撑破） */
+                .grid-cols-\\[auto_auto_1fr\\] { grid-template-columns: 1fr !important; }
+                .gap-x-25 { column-gap: 0.4rem !important; }
+                .gap-y-12 { row-gap: 0.3rem !important; }
+                .justify-items-end { justify-items: start !important; }
+                .text-end { text-align: left !important; }
+                .text-right { text-align: left !important; }
                 /* footer/其他溢出元素兜底 */
                 .text-oneline { white-space: normal !important; }
                 /* 首页 slogan 高度适配 */

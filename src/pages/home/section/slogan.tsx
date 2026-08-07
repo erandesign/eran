@@ -24,6 +24,13 @@ export default function Slogan() {
     const ctx = gsap.context(() => {
       // 每行错开 0.15 的起始偏移，形成依次放大的层次
       rows.forEach((row, i) => {
+        const st = {
+          trigger: section,
+          scroller: '#home-main', // 首页是 #home-main 滚动容器
+          start: 'top 90%',
+          end: 'bottom 10%',
+          scrub: 0.8, // 滚动驱动，平滑跟随
+        }
         gsap.fromTo(
           row,
           { scale: 1 },
@@ -31,10 +38,9 @@ export default function Slogan() {
             scale: 1.2,
             ease: 'none',
             scrollTrigger: {
-              trigger: section,
+              ...st,
               start: 'top 90%',
               end: 'center 40%',
-              scrub: 0.8, // 滚动驱动，平滑跟随
             },
           },
         )
@@ -46,10 +52,9 @@ export default function Slogan() {
             scale: 1,
             ease: 'none',
             scrollTrigger: {
-              trigger: section,
+              ...st,
               start: 'center 40%',
               end: 'bottom 10%',
-              scrub: 0.8,
             },
           },
         )
