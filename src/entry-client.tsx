@@ -1,60 +1,47 @@
 // @refresh reload
 import { StartClient, mount } from '@solidjs/start/client'
-import { theme, setTheme } from '~/components/ThemeChange'
+import { setTheme } from '~/components/ThemeChange'
 
-// 全局主题初始化：所有页面水合后执行（含首页等无 ThemeChange 组件的页面）
+/**
+ * 全局主题初始化（原生 DOM 操作，不依赖 SolidJS 水合时序）：
+ * - 有 localStorage 存储 → 用存储值（用户手动选择）
+ * - 无存储 → 跟随系统 prefers-color-scheme，并监听系统变化自动跟随
+ */
+function applyTheme(isDark: boolean) {
+  const root = document.querySelector<HTMLElement>('html')
+  if (!root)
+    return
+  root.classList.toggle('dark', isDark)
+  root.classList.toggle('light', !isDark)
+  try {
+    setTheme(isDark ? 'dark' : 'light')
+  }
+  catch {
+    /* signal 未就绪忽略 */
+  }
+}
+
 function initTheme() {
-  if (typeof window === 'undefined')
+  if (typeof document === 'undefined')
     return
   const themeKey = 'darkTheme'
   const stored = localStorage.getItem(themeKey)
-  const apply = (isDark: boolean) => {
-    const root = document.querySelector<HTMLElement>('html')
-    root?.classList.toggle('dark', isDark)
-    root?.classList.toggle('light', !isDark)
-    try {
-      setTheme(isDark ? 'dark' : 'light')
-    }
-    catch {
-      /* signal 尚未就绪时忽略 */
-    }
-  }
-
   if (stored) {
-    // 用户之前手动选择过 → 用存储值
-    apply(stored === 'true' || stored === 'dark')
+    applyTheme(stored === 'true' || stored === 'dark')
+    return
   }
-  else {
-    // 未选择 → 跟随系统
-    apply(window.matchMedia('(prefers-color-scheme: dark)').matches)
-    // 监听系统变化，自动跟随（用户未手动选择时）
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = (e: MediaQueryListEvent) => {
-      // 若用户已手动选择则不再跟随系统
-      if (!localStorage.getItem(themeKey))
-        apply(e.matches)
-    }
-    mq.addEventListener('change', onChange)
+  // 跟随系统
+  applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const mq = window.matchMedia('(prefers-color-scheme: dark)')
+  const onChange = (e: MediaQueryListEvent) => {
+    // 用户手动选择后不再跟随
+    if (!localStorage.getItem(themeKey))
+      applyTheme(e.matches)
   }
+  mq.addEventListener('change', onChange)
 }
 
-// 先 mount 再初始化（确保 SolidJS signal 可用），同时水合前用原生方式预置 class 防闪烁
-if (typeof document !== 'undefined') {
-  // 水合前快速设置（同步，防闪烁）
-  try {
-    const stored = localStorage.getItem('darkTheme')
-    const isDark = stored
-      ? stored === 'true' || stored === 'dark'
-      : window.matchMedia('(prefers-color-scheme: dark)').matches
-    document.querySelector('html')?.classList.toggle('dark', isDark)
-    document.querySelector('html')?.classList.toggle('light', !isDark)
-  }
-  catch {
-    /* ignore */
-  }
-}
+// 立即执行（脚本在 body 末尾，DOM 已就绪）
+initTheme()
 
 mount(() => <StartClient />, document.getElementById('app')!)
-
-// mount 后执行完整逻辑（含系统变化监听）
-setTimeout(() => initTheme(), 0)
