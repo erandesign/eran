@@ -1,12 +1,11 @@
 import { onCleanup, onMount } from 'solid-js'
 import { I18n, i18n } from '~/components/i18n'
-import { ScrollTrigger, gsap } from '~/utils/gsap'
 
 /**
- * 口号：滚动驱动动画
+ * 口号：滚动驱动动画（原生实现，不依赖 gsap）
  * - 鼠标滚轮滚动时，文字随滚动进度实时放大（到 1.2）再缩回正常
- * - 每行依次错开（行 0 先动，行 3 后动），形成波浪层次
- * - scrub 模式：滚轮位置决定放大程度，回滚即还原
+ * - 每行依次错开偏移，形成波浪层次
+ * - scrub 模式：滚动位置决定放大程度，回滚即还原
  */
 export default function Slogan() {
   onMount(() => {
@@ -15,54 +14,35 @@ export default function Slogan() {
     const section = document.getElementById('home-slogan')
     if (!section)
       return
-    const rows = section.querySelectorAll<HTMLElement>('.home-slogan-row')
+    const rows = Array.from(section.querySelectorAll<HTMLElement>('.home-slogan-row'))
     if (!rows.length)
       return
 
-    gsap.registerPlugin(ScrollTrigger)
+    // 首页滚动容器
+    const scroller = document.querySelector<HTMLElement>('#home-main') || window as any
 
-    const ctx = gsap.context(() => {
-      // 每行错开 0.15 的起始偏移，形成依次放大的层次
+    let rafId = 0
+    const update = () => {
+      const rect = section.getBoundingClientRect()
+      const vh = (scroller === (window as any)) ? window.innerHeight : (scroller as HTMLElement).clientHeight
+      // 计算 slogan 在视口中的进度：0（刚进入）→ 0.5（正中）→ 1（离开）
+      const total = rect.height + vh
+      const progress = Math.min(Math.max((vh - rect.top) / total, 0), 1)
+      // 0→0.5 放大到 1.2，0.5→1 缩回 1（正弦波：中段最大）
+      const wave = Math.sin(progress * Math.PI)
       rows.forEach((row, i) => {
-        const st = {
-          trigger: section,
-          scroller: '#home-main', // 首页是 #home-main 滚动容器
-          start: 'top 90%',
-          end: 'bottom 10%',
-          scrub: 0.8, // 滚动驱动，平滑跟随
-        }
-        gsap.fromTo(
-          row,
-          { scale: 1 },
-          {
-            scale: 1.2,
-            ease: 'none',
-            scrollTrigger: {
-              ...st,
-              start: 'top 90%',
-              end: 'center 40%',
-            },
-          },
-        )
-        // 回落到正常（后段）
-        gsap.fromTo(
-          row,
-          { scale: 1.2 },
-          {
-            scale: 1,
-            ease: 'none',
-            scrollTrigger: {
-              ...st,
-              start: 'center 40%',
-              end: 'bottom 10%',
-            },
-          },
-        )
+        // 每行错开 0.15 相位，形成依次放大层次
+        const p = Math.min(Math.max(progress * 1.3 - i * 0.06, 0), 1)
+        const scale = 1 + 0.2 * Math.sin(p * Math.PI)
+        row.style.transform = `scale(${scale.toFixed(4)})`
+        row.style.transformOrigin = 'center center'
       })
-    }, section)
+      rafId = requestAnimationFrame(update)
+    }
+    rafId = requestAnimationFrame(update)
 
     onCleanup(() => {
-      ctx.revert()
+      cancelAnimationFrame(rafId)
     })
   })
 
