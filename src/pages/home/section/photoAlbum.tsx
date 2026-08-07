@@ -75,6 +75,7 @@ export default function PhotoAlbum() {
    * - 平滑滑动到下一张（2s 缓动，easeOutCubic 减速自然）
    * - 停留 3.5s 后继续
    * - 悬停/拖拽时暂停，离开后恢复
+   * - 用 track.details.position 计算目标（free-snap 模式兼容）
    */
   const autoplay = (target: KeenSliderInstance) => {
     let paused = false
@@ -82,13 +83,33 @@ export default function PhotoAlbum() {
 
     const scheduleNext = () => {
       clearTimeout(autoPlayTimer)
-      if (paused || target.track.details.length <= 1)
+      if (paused)
+        return
+      const len = target.track.details.length
+      if (!len || len <= 1)
         return
       autoPlayTimer = setTimeout(() => {
-        const current = target.track.details.relativeSlide
-        const next = (current + 1) % Math.max(target.track.details.length, 1)
-        // 平滑滑动：2s 缓动 + 自然的减速
-        target.moveToIdx(next, false, { duration: 2000, easing: easeOutCubic })
+        // 与 keen-slider 内部 next() 一致：用 abs + absolute=true
+        const details = target.track.details
+        const current = details.abs || 0
+        // 非 loop 模式：到最后一张后平滑滚回开头（循环播放）
+        if (current >= details.length - 1) {
+          try {
+            target.moveToIdx(0, true, { duration: 2000, easing: easeOutCubic })
+          }
+          catch {
+            /* ignore */
+          }
+        }
+        else {
+          try {
+            // 平滑滑动：2s 缓动 + 自然的减速
+            target.moveToIdx(current + 1, true, { duration: 2000, easing: easeOutCubic })
+          }
+          catch {
+            /* ignore */
+          }
+        }
         scheduleNext()
       }, 3500)
     }
