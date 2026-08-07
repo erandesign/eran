@@ -17,14 +17,42 @@ export default createHandler(() => {
             />
             <link rel="icon" href="/favicon.ico" />
             <link rel="stylesheet" href="/font/LXGWFasmartGothic/font.css" />
-            {/* 移动端覆盖：修复 autoRem 在窄屏下字号过度压缩问题 */}
+            {/* 移动端覆盖：修复 autoRem 在窄屏下字号过度压缩 + 间距溢出 */}
             <style>{`
-              /* 移动端：--rem 固定为 50px 基准（text-24→24px 可读，px-150→75px 内边距） */
+              /* 移动端：--rem 固定 50px 基准（text-24→24px 可读） */
               @media (max-width: 768px) {
                 html {
                   font-size: 50px !important;
                   --rem: 50px !important;
                 }
+                /* 关键布局间距在移动端收窄，避免横向溢出 */
+                .px-150 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .px-120 { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .px-56  { padding-left: 1rem !important; padding-right: 1rem !important; }
+                .gap-120 { gap: 1rem !important; }
+                .gap-88  { gap: 1rem !important; }
+                .gap-56  { gap: 1rem !important; }
+                .gap-80  { gap: 0.8rem !important; }
+                .ml-614 { margin-left: 0 !important; }
+                .w-1220 { width: 100% !important; }
+                .w-166  { width: 2rem !important; }
+                .h-1080 { height: 13rem !important; }
+                .my-132 { margin-top: 1rem !important; margin-bottom: 1rem !important; }
+                .mt-350 { margin-top: 2rem !important; }
+                .mt-132 { margin-top: 1rem !important; }
+                .mb-164 { margin-bottom: 2rem !important; }
+                .mb-50  { margin-bottom: 0.6rem !important; }
+                .py-88  { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+                .py-50  { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+                .py-43  { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+                /* 字距在移动端收窄（tracking-N 按 50px 基准会过大） */
+                .tracking-17 { letter-spacing: 0.2em !important; }
+                .tracking-11 { letter-spacing: 0.2em !important; }
+                .tracking-8  { letter-spacing: 0.15em !important; }
+                .tracking-7  { letter-spacing: 0.15em !important; }
+                .tracking-5  { letter-spacing: 0.1em !important; }
+                /* 首页 slogan 高度适配 */
+                #home-slogan { height: 22rem !important; }
               }
             `}</style>
             {assets}

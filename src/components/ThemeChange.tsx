@@ -2,7 +2,10 @@ import type { JSX } from 'solid-js'
 import { createEffect, createSignal, onMount } from 'solid-js'
 
 const themeKey = 'darkTheme'
-export const [theme, setTheme] = createSignal<string>(typeof localStorage !== 'undefined' ? localStorage.getItem(themeKey)! : '')
+// 初始值：仅客户端读取 localStorage，否则 ''
+export const [theme, setTheme] = createSignal<string>(
+  typeof localStorage !== 'undefined' ? localStorage.getItem(themeKey) || '' : '',
+)
 
 /** 用户是否手动点过切换（自动匹配系统时不视为手动选择） */
 let userManuallyPicked = false
