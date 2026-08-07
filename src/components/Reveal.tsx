@@ -25,7 +25,7 @@ let resetTimer: ReturnType<typeof setTimeout> | undefined
  * - 同一批触发元素按触发顺序设置 transition-delay（0.15s 递增，全局计数器）
  * - 400ms 内无新元素触发则重置计数器，下一批滚动进来的元素从头错开
  * - opacity 0 + translateY(40px) → 1 + 0，cubic-bezier(0.16,1,0.3,1)，0.8s，一次性
- * - SSR 输出可见（SEO 完整）；客户端水合后无过渡隐藏，再依次淡入（无闪烁）
+ * - SSR 输出可见（SEO 完整，无 JS 也可见）；客户端水合后禁用过渡隐藏再依次淡入（无闪烁）
  * - 保留现有 class/classList 透传（不破坏 col-* 网格定位）
  */
 export default function Reveal(props: RevealProps) {
@@ -60,30 +60,40 @@ export default function Reveal(props: RevealProps) {
     if (typeof IntersectionObserver === 'undefined')
       return
 
-    // 同步隐藏（onMount 在浏览器 paint 前执行，SSR opacity:1 → 隐藏无过渡闪烁）
+    // 禁用过渡 → 同步隐藏（无 1→0 动画闪烁）
+    el.style.transition = 'none'
     setVisible(false)
+    const doReveal = () => reveal()
 
-    // 首屏视口内卡片：立即按批次依次出现（同一帧内错开淡入）
-    const rect = el.getBoundingClientRect()
-    const vh = window.innerHeight || document.documentElement.clientHeight
-    if (rect.top < vh && rect.bottom > 0) {
-      reveal()
-      return
-    }
+    // 下一帧恢复过渡，让 reveal 播放 0→1 淡入
+    requestAnimationFrame(() => {
+      if (!el)
+        return
+      el.style.transition = ''
 
-    // 视口外卡片：滚动进入时依次淡入
-    observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            observer?.unobserve(entry.target)
-            reveal()
+      // 首屏视口内卡片：立即按批次依次出现
+      const rect = el.getBoundingClientRect()
+      const vh = window.innerHeight || document.documentElement.clientHeight
+      if (rect.top < vh && rect.bottom > 0) {
+        doReveal()
+        return
+      }
+
+      // 视口外卡片：滚动进入时依次淡入
+      observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              observer?.unobserve(entry.target)
+              reveal()
+            }
           }
-        }
-      },
-      { threshold },
-    )
-    observer.observe(el)
+        },
+        { threshold },
+      )
+      observer.observe(el)
+    })
+
     onCleanup(() => {
       observer?.disconnect()
       clearTimeout(resetTimer)
