@@ -1,0 +1,77 @@
+name: Deploy ERAN
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install build tools (better-sqlite3 native compile)
+        run: sudo apt-get update && sudo apt-get install -y build-essential python3
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Fetch production database (prerender needs real data)
+        run: |
+          mkdir -p .data
+          ssh root@${{ secrets.SERVER_HOST }} "cat ${{ secrets.APP_PATH }}/.data/db.sqlite3" > .data/db.sqlite3
+          ls -la .data/
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (i18n + app)
+        run: pnpm build:i18n && pnpm build
+
+      - name: Package .output
+        run: tar -czf /tmp/eran_output.tar.gz -C .output .
+
+      - name: Deploy to server
+        run: |
+          scp -o StrictHostKeyChecking=no /tmp/eran_output.tar.gz root@${{ secrets.SERVER_HOST }}:/tmp/eran_output.tar.gz
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} "
+            set -e
+            cd ${{ secrets.APP_PATH }}
+            echo '=== 1. 备份当前 .output ==='
+            rm -rf .output.bak
+            [ -d .output ] && mv .output .output.bak || echo '无旧 .output'
+            echo '=== 2. 解压新产物 ==='
+            mkdir -p .output
+            tar -xzf /tmp/eran_output.tar.gz -C .output
+            rm -f /tmp/eran_output.tar.gz
+            echo '=== 3. 确保 better-sqlite3 原生模块可用（服务器 node_modules） ==='
+            node -e \"require('better-sqlite3'); console.log('better-sqlite3 OK')\" 2>&1 || pnpm rebuild better-sqlite3
+            echo '=== 4. 重启 PM2 ==='
+            pm2 restart ecosystem.config.cjs --update-env
+            echo '=== 5. 健康检查 ==='
+            sleep 5
+            curl -s -o /dev/null -w '首页: %{http_code}\n' http://127.0.0.1:3000/zh/
+          "
+
+      - name: Verify production
+        run: |
+          sleep 5
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} "curl -s http://127.0.0.1:3000/zh/ | grep -c 'home-main' || true"
