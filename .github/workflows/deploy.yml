@@ -41,7 +41,10 @@ jobs:
           ls -la .data/
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: |
+          # tk-i18n bug: emptyDir 在 mkdir 之前调用，全新 clone 时 src/i18n/messages 不存在会报错
+          mkdir -p src/i18n/messages
+          pnpm install --no-frozen-lockfile
 
       - name: Build (i18n + app)
         run: pnpm build:i18n && pnpm build
