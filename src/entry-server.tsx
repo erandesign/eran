@@ -17,6 +17,8 @@ export default createHandler(() => {
             />
             <link rel="icon" href="/favicon.ico" />
             <link rel="stylesheet" href="/font/LXGWFasmartGothic/font.css" />
+            {/* Bing 站长验证 */}
+            <meta name="msvalidate.01" content="083970CADEBC65FD631053903BE3DBAE" />
             {/* 移动端覆盖：响应式字号 + 排版适配 */}
             <style>{`
               @media (max-width: 768px) {
