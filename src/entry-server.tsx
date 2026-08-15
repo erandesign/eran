@@ -2,14 +2,38 @@
 import { StartServer, createHandler } from '@solidjs/start/server'
 import { locationLanguageTag } from '~/components/i18n'
 
-export default createHandler(() => {
-  const url_language_tag = locationLanguageTag()
+/** 根据请求 URL 生成 SEO 兜底标签（预渲染/爬虫无 JS 时可见，水合后由 @solidjs/meta 动态覆盖） */
+function seoFallback(event: any) {
+  const url = event?.request?.url || ''
+  const path = url ? new URL(url).pathname : ''
+  const lang = locationLanguageTag() || 'zh'
+  const siteTitle = 'ERAN DESIGN'
+  const siteDesc = 'ERAN DESIGN 空间设计事务所，立足中国深圳。专注地产&办公、终端SI、展示道具、品牌VI、网站&APP，提供整体化、可持续性、高识别度的空间设计解决方案。'
+
+  // 作品详情页：/zh/work/:id → 动态 title 由运行时 SSR 提供（@solidjs/meta），这里给通用兜底
+  let title = siteTitle
+  let desc = siteDesc
+  if (path.includes('/works'))
+    title = `${siteTitle} | 作品案例`
+  else if (path.includes('/about'))
+    title = `${siteTitle} | 关于我们`
+  else if (path.includes('/work/'))
+    title = `${siteTitle} | 空间设计案例`
+
+  return { title, desc, lang }
+}
+
+export default createHandler((event) => {
+  const seo = seoFallback(event)
+  const url_language_tag = seo.lang
   return (
     <StartServer
       document={({ assets, children, scripts }) => (
         <html lang={url_language_tag} class="dark">
           <head>
             <meta charset="utf-8" />
+            <title>{seo.title}</title>
+            <meta name="description" content={seo.desc} />
             {/* <meta name="viewport" content="width=device-width, initial-scale=1" /> */}
             <meta
               name="viewport"
@@ -19,6 +43,12 @@ export default createHandler(() => {
             <link rel="stylesheet" href="/font/LXGWFasmartGothic/font.css" />
             {/* Bing 站长验证 */}
             <meta name="msvalidate.01" content="083970CADEBC65FD631053903BE3DBAE" />
+            {/* 预渲染 SEO 兜底（og 标签） */}
+            <meta property="og:title" content={seo.title} />
+            <meta property="og:description" content={seo.desc} />
+            <meta property="og:image" content="https://www.erandesign.cn/images/cover.webp" />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={`https://www.erandesign.cn${seo.lang === 'zh' ? '/zh/' : '/en/'}`} />
             {/* 移动端覆盖：响应式字号 + 排版适配 */}
             <style>{`
               @media (max-width: 768px) {
