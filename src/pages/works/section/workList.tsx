@@ -4,6 +4,7 @@ import { I18n, i18n } from '~/components/i18n'
 import { getAllWorks } from '~/serverAction/works'
 import Image from '~/components/Image'
 import Reveal from '~/components/Reveal'
+import { cacheWorks } from '~/components/workCache'
 
 const n = 5
 /** 作品列表 */
@@ -12,6 +13,12 @@ export default function WorkList() {
   const [params] = useSearchParams()
   // 一次性加载全部公开作品（type=''），分类切换纯前端过滤，避免 server-fn 431 卡顿
   const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
+  // 数据到达后写入共享缓存（详情页复用，避免重复请求）
+  createMemo(() => {
+    const list = allData()
+    if (list?.length)
+      cacheWorks(param.lang, list)
+  })
   // 按 URL type 参数前端过滤（空 = 全部）
   const data = createMemo(() => {
     const t = typeof params.type === 'string' ? params.type : ''

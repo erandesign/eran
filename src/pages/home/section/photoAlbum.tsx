@@ -7,6 +7,7 @@ import Image from '~/components/Image'
 import Link from '~/components/Link'
 import { i18n } from '~/components/i18n'
 import { getAllWorks } from '~/serverAction/works'
+import { cacheWorks } from '~/components/workCache'
 import useMouseScrollX from '~/utils/useMouseScrollX'
 
 /**  */
@@ -25,6 +26,12 @@ export default function PhotoAlbum() {
   const param = useParams()
   // 一次性加载全部公开作品（type=''），切换 tab 时纯前端过滤，避免 server-fn 431
   const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
+  // 数据到达后写入共享缓存（详情页复用，SPA 导航零请求）
+  createMemo(() => {
+    const list = allData()
+    if (list?.length)
+      cacheWorks(param.lang, list)
+  })
   // 按当前 tab 类型过滤
   const data = createMemo(() => {
     const type = i18n.subTitles({}, { lang: 'zh' })[sNum()]

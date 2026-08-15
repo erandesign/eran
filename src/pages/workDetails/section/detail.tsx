@@ -11,13 +11,35 @@ import { getPublicWorkById, getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
 import Lightbox from '~/components/Lightbox'
 import Reveal from '~/components/Reveal'
-/**  */
+import { getWorkFromCache } from '~/components/workCache'
+import { languageTag } from '~/components/i18n'
+
+/**
+ * 详情页数据源：
+ * 1. 优先从共享缓存按 id 取（SPA 导航场景，零网络请求 → 切换秒开）
+ * 2. 缓存未命中（直接刷新详情页 URL）→ getAllWorks 拉一次并缓存
+ * 3. 仍失败 → 回退 getWorkById（服务端兜底）
+ */
 export default function Detail() {
   const param = useParams()
-  const [data] = createResource(() => Number(param.id || 0), getWorkById, {})
+  const lang = () => languageTag() || param.lang || 'zh'
+  const [data] = createResource(
+    () => Number(param.id || 0),
+    async (id) => {
+      const cached = await getWorkFromCache(lang(), id)
+      if (cached)
+        return cached
+      // 缓存兜底失败：走服务端单条查询
+      return await getWorkById(id)
+    },
+    {},
+  )
 
   // SPA 导航 title 兜底：数据到达后直接设置 document.title（绕过 @solidjs/meta SPA bug）
   createEffect(() => {
+    // SSR 阶段无 document，跳过（客户端水合后生效）
+    if (typeof document === 'undefined')
+      return
     const item = data()
     if (item?.name) {
       document.title = `${item.name} | ${i18n.title()}`
@@ -29,7 +51,8 @@ export default function Detail() {
   })
   // 离开详情页时恢复默认 title（避免留在作品名）
   onCleanup(() => {
-    document.title = i18n.title()
+    if (typeof document !== 'undefined')
+      document.title = i18n.title()
   })
 
   return (
