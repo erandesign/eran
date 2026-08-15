@@ -1,15 +1,11 @@
 // @refresh reload
 import { StartServer, createHandler } from '@solidjs/start/server'
 import { locationLanguageTag } from '~/components/i18n'
-import { db } from './DB'
-import { workList } from './DB/schema'
-import { eq, and } from 'drizzle-orm'
 
 /**
  * 根据请求 URL 生成 SEO 兜底标签（预渲染/爬虫无 JS 时可见，水合后由 @solidjs/meta 动态覆盖）
- * 详情页 /work/:id 会查询数据库获取作品名，生成含作品名的 title（爬虫可抓取）
  */
-async function seoFallback(event: any) {
+function seoFallback(event: any) {
   const url = event?.request?.url || ''
   const path = url ? new URL(url).pathname : ''
   const lang = locationLanguageTag() || 'zh'
@@ -18,35 +14,18 @@ async function seoFallback(event: any) {
 
   let title = siteTitle
   let desc = siteDesc
-
-  const workMatch = path.match(/\/work\/(\d+)/)
-  if (workMatch) {
-    // 详情页：直接查数据库获取作品名（SSR 同步，爬虫可抓取含作品名的 title）
-    try {
-      const id = Number(workMatch[1])
-      const rows = await db.select({ name: workList.name, address: workList.address, investor: workList.investor, description: workList.description }).from(workList).where(and(eq(workList.id, id), eq(workList.status, 'public'))).limit(1)
-      const work = rows[0]
-      if (work?.name) {
-        title = `${work.name} | ${siteTitle}`
-        desc = `${work.name} - ${work.address || ''} - ${work.investor || ''} - ${(work.description || '').slice(0, 100)}`
-        return { title, desc, lang, path }
-      }
-    }
-    catch {
-      // 查询失败用兜底
-    }
-    title = `${siteTitle} | 空间设计案例`
-  }
-  else if (path.includes('/works'))
+  if (path.includes('/works'))
     title = `${siteTitle} | 作品案例`
   else if (path.includes('/about'))
     title = `${siteTitle} | 关于我们`
+  else if (path.includes('/work/'))
+    title = `${siteTitle} | 空间设计案例`
 
   return { title, desc, lang, path }
 }
 
-export default createHandler(async (event) => {
-  const seo = await seoFallback(event)
+export default createHandler((event) => {
+  const seo = seoFallback(event)
   const url_language_tag = seo.lang
   const canonicalPath = seo.path || (seo.lang === 'zh' ? '/zh/' : '/en/')
   return (
