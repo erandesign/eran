@@ -1,5 +1,5 @@
 import { useParams } from '@solidjs/router'
-import { ErrorBoundary, For, Match, Show, Switch, createResource } from 'solid-js'
+import { ErrorBoundary, For, Match, Show, Switch, createEffect, createResource, onCleanup } from 'solid-js'
 import dayjs from 'dayjs'
 import { Dynamic } from 'solid-js/web'
 import { Title } from '@solidjs/meta'
@@ -15,6 +15,22 @@ import Reveal from '~/components/Reveal'
 export default function Detail() {
   const param = useParams()
   const [data] = createResource(() => Number(param.id || 0), getWorkById, {})
+
+  // SPA 导航 title 兜底：数据到达后直接设置 document.title（绕过 @solidjs/meta SPA bug）
+  createEffect(() => {
+    const item = data()
+    if (item?.name) {
+      document.title = `${item.name} | ${i18n.title()}`
+      // 同步更新 meta description（客户端）
+      const desc = document.querySelector('meta[name="description"]')
+      if (desc)
+        desc.setAttribute('content', `${item.name} - ${item.address || ''} - ${item.investor || ''}`)
+    }
+  })
+  // 离开详情页时恢复默认 title（避免留在作品名）
+  onCleanup(() => {
+    document.title = i18n.title()
+  })
 
   return (
     <div class="min-h-100vh">
