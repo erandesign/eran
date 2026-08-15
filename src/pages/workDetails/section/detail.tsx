@@ -1,5 +1,6 @@
 import { useParams } from '@solidjs/router'
-import { ErrorBoundary, For, Match, Show, Switch, createEffect, createResource } from 'solid-js'
+import { ErrorBoundary, For, Match, Show, Switch } from 'solid-js'
+import { use } from '@solidjs/router'
 import dayjs from 'dayjs'
 import { Dynamic } from 'solid-js/web'
 import { Title } from '@solidjs/meta'
@@ -7,14 +8,15 @@ import { contentTypeMap } from './contentTypeMap'
 import { I18n, i18n } from '~/components/i18n'
 import SeoMeta from '~/components/SeoMeta'
 import { WorkJsonLd } from '~/components/JsonLd'
-import { getPublicWorkById, getWorkById } from '~/serverAction/works'
+import { getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
 import Lightbox from '~/components/Lightbox'
 import Reveal from '~/components/Reveal'
 /**  */
 export default function Detail() {
   const param = useParams()
-  const [data] = createResource(() => Number(param.id || 0), getWorkById, {})
+  // 用 cache() + use() 同步预取：SSR 时 title/meta 即含作品名（爬虫可抓取）
+  const data = () => use(getWorkById, () => Number(param.id || 0))
 
   return (
     <div class="min-h-100vh">
