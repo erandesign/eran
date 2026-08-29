@@ -23,6 +23,7 @@ export default defineConfig({
   },
   server: isBuild
     ? {
+        // 预渲染在 GitHub Actions runner（内存充足）执行，服务器本地 967MB 会挂起
         prerender: {
           routes: ['/'].concat(langs, routes.map(v => langs.map(l => l + v)).flat(1)),
         },

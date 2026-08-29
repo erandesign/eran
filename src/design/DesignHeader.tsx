@@ -1,6 +1,6 @@
 import { A } from '@solidjs/router'
 import { i18n } from '~/components/i18n'
-import ThemeChange from '~/components/ThemeChange'
+import { ThemeChange } from '~/components/ThemeChange'
 
 /** 新设计顶部导航（mix-blend-difference 自动适应明暗背景） */
 export default function DesignHeader(props: {

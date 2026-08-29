@@ -77,4 +77,4 @@ jobs:
       - name: Verify production
         run: |
           sleep 5
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} "curl -s http://127.0.0.1:3000/zh/ | grep -c 'home-main' || true"
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} "curl -s http://127.0.0.1:3000/zh/ | grep -c 'eran-design' || true"
