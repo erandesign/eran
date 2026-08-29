@@ -11,7 +11,7 @@ export default function DesignHeader(props: {
         <img
           src="/images/logo_tab.svg"
           alt="ERAN DESIGN"
-          style={{ height: '22px', width: 'auto', display: 'block' }}
+          style={{ height: '14px', width: 'auto', display: 'block' }}
         />
       </A>
       <nav class="d-nav">
@@ -19,7 +19,7 @@ export default function DesignHeader(props: {
           {i18n.nav_p_1()}
         </A>
         <A href="/concat" classList={{ active: props.active === 'contact' }}>
-          {i18n.nav_p_3()}
+          {i18n.nav_p_3().replace('联系我们', '联系')}
         </A>
       </nav>
     </header>

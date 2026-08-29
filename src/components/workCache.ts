@@ -36,3 +36,11 @@ export async function getWorkFromCache(lang: string, id: number): Promise<any | 
   cacheWorks(lang, works as any[])
   return (works as any[]).find(w => Number(w.id) === id)
 }
+
+/** 获取某语言缓存中的全部作品（供详情页 NEXT PROJECT 使用；无缓存时返回空数组） */
+export function getAllCachedWorks(lang: string): any[] {
+  const langCache = cache[lang]
+  if (!langCache)
+    return []
+  return [...langCache.values()].sort((a, b) => Number(b.index || 0) - Number(a.index || 0) || Number(b.id) - Number(a.id))
+}

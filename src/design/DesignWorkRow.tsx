@@ -179,16 +179,14 @@ export default function DesignWorkRow(props: {
           </div>
         </div>
 
-        {/* 点击展开/收起（避开圆点与面板；展开后隐藏避免遮挡） */}
-        <Show when={!expanded()}>
-          <div
-            class="d-media-hit"
-            style={{
-              position: 'absolute', inset: 0, zIndex: 3, cursor: 'pointer',
-            }}
-            onClick={() => toggle()}
-          />
-        </Show>
+        {/* 点击展开/收起（面板与圆点 z-index 更高，不受遮挡） */}
+        <div
+          class="d-media-hit"
+          style={{
+            position: 'absolute', inset: 0, zIndex: 3, cursor: 'pointer',
+          }}
+          onClick={() => toggle()}
+        />
       </div>
 
       {/* 文字标签 */}
