@@ -1,6 +1,6 @@
-import { For, Show, createSignal, onCleanup, onMount } from 'solid-js'
+import { For, Show, createSignal, onCleanup } from 'solid-js'
 import type { IWorkListItem } from '~/serverAction/works'
-import { useNavigate } from '@solidjs/router'
+import { useNavigate, useParams } from '@solidjs/router'
 
 /** 从 content 数组提取全部图片 URL */
 function extractImages(item: IWorkListItem): string[] {
@@ -26,6 +26,12 @@ export default function DesignWorkRow(props: {
   hide?: boolean
 }) {
   const navigate = useNavigate()
+  const params = useParams()
+  const goDetail = () => {
+    // 带 lang 前缀跳转（旧版 workList 用 ../work/id 相对路径，绝对路径会丢 lang → 404）
+    const lang = params.lang || 'zh'
+    navigate(`/${lang}/work/${props.item.id}`)
+  }
   const imgs = extractImages(props.item)
   const [expanded, setExpanded] = createSignal(false)
   let mediaRef: HTMLDivElement
@@ -161,7 +167,7 @@ export default function DesignWorkRow(props: {
               style={{ position: 'static', color: 'var(--gold)' }}
               onClick={(e) => {
                 e.stopPropagation()
-                navigate(`/work/${props.item.id}`)
+                goDetail()
               }}
             >
               查看详情 →
@@ -169,14 +175,16 @@ export default function DesignWorkRow(props: {
           </div>
         </div>
 
-        {/* 点击展开/收起（避开圆点与面板） */}
-        <div
-          class="d-media-hit"
-          style={{
-            position: 'absolute', inset: 0, zIndex: 3, cursor: 'pointer',
-          }}
-          onClick={() => toggle()}
-        />
+        {/* 点击展开/收起（避开圆点与面板；展开后隐藏避免遮挡） */}
+        <Show when={!expanded()}>
+          <div
+            class="d-media-hit"
+            style={{
+              position: 'absolute', inset: 0, zIndex: 3, cursor: 'pointer',
+            }}
+            onClick={() => toggle()}
+          />
+        </Show>
       </div>
 
       {/* 文字标签 */}

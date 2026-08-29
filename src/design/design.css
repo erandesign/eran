@@ -121,6 +121,7 @@ html:not(.dark) .eran-design { cursor: none; }
 
 /* ---------- 作品行（3:1 布局 + 点击展开 + 多图滑动） ---------- */
 .eran-design #d-workRows { display: flex; flex-direction: column; gap: 26px; }
+.eran-design #d-workRows > .d-reveal:nth-child(even) .d-work-row { flex-direction: row-reverse; }
 .eran-design .d-work-row { display: flex; align-items: stretch; min-height: 66vh; }
 .eran-design .d-work-row:nth-child(even) { flex-direction: row-reverse; }
 .eran-design .d-work-media {
@@ -169,8 +170,11 @@ html:not(.dark) .eran-design { cursor: none; }
   padding: 64px 52px; display: flex; flex-direction: column; justify-content: center;
   transform: translateX(100%); transition: transform .55s cubic-bezier(.2,.8,.2,1);
 }
+.eran-design #d-workRows > .d-reveal:nth-child(even) .d-work-row .d-expand-info { right: auto; left: 0; box-shadow: 24px 0 60px rgba(0,0,0,.25); transform: translateX(-100%); }
 .eran-design .d-work-row:nth-child(even) .d-expand-info { right: auto; left: 0; box-shadow: 24px 0 60px rgba(0,0,0,.25); transform: translateX(-100%); }
 .eran-design .d-work-row.expanded .d-expand-info { transition: transform .55s cubic-bezier(.2,.8,.2,1) .32s; transform: translateX(0); }
+.eran-design #d-workRows > .d-reveal:nth-child(even) .d-work-row .d-expand-info .close { right: auto; left: 26px; }
+.eran-design .d-work-row:nth-child(even) .d-expand-info .close { right: auto; left: 26px; }
 .eran-design .d-expand-info .no { font-family: var(--f-label); font-size: 11px; color: var(--gold); letter-spacing: .14em; }
 .eran-design .d-expand-info h3 { font-family: var(--f-serif); font-weight: 400; font-size: clamp(24px, 2.8vw, 38px); margin: 16px 0 16px; line-height: 1.25; }
 .eran-design .d-expand-info .meta { font-family: var(--f-label); font-size: 11px; color: rgba(250,248,244,.55); letter-spacing: .06em; margin-bottom: 22px; text-transform: uppercase; }
@@ -179,7 +183,6 @@ html:not(.dark) .eran-design { cursor: none; }
   position: absolute; top: 26px; right: 26px; font-family: var(--f-label); font-size: 11px;
   letter-spacing: .1em; cursor: pointer; color: rgba(250,248,244,.7); z-index: 2;
 }
-.eran-design .d-work-row:nth-child(even) .d-expand-info .close { right: auto; left: 26px; }
 
 /* 图片柔和暗化遮罩 */
 .eran-design .d-work-media::before {
