@@ -68,6 +68,8 @@ jobs:
             rm -f /tmp/eran_output.tar.gz
             echo '=== 2.5 恢复上传图片（后台新传的图片不被覆盖） ==='
             if [ -d /tmp/eran_uploads ]; then
+              # 先移除 tar 包内的 images/works，再整体放回旧目录（避免 mv 变成子目录）
+              rm -rf .output/public/images/works
               mkdir -p .output/public/images
               mv /tmp/eran_uploads .output/public/images/works
               echo '上传图片已恢复'
