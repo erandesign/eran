@@ -22,14 +22,14 @@ export const uploadImage = action(async (formData: FormData) => {
   // 安全文件名：时间戳 + 随机
   const filename = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`
   const relDir = `/images/works/${dateDir}`
-  const dir = `public${relDir}`
-  const dest = `${dir}/${filename}`
 
   try {
     const { mkdir, writeFile } = await import('node:fs/promises')
-    await mkdir(dir, { recursive: true })
+    // 写入 .output/public（Nitro 静态服务目录）；CI 部署时会保留该目录（见 workflow）
+    const outDir = ['.output', 'public', 'images', 'works', dateDir].join('/')
+    await mkdir(outDir, { recursive: true })
     const buf = Buffer.from(await file.arrayBuffer())
-    await writeFile(dest, buf)
+    await writeFile(`${outDir}/${filename}`, buf)
     return { message: 'success', code: 0, url: `${relDir}/${filename}` }
   }
   catch (err: any) {

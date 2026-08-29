@@ -58,13 +58,20 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} "
             set -e
             cd ${{ secrets.APP_PATH }}
-            echo '=== 1. 备份当前 .output ==='
-            rm -rf .output.bak
+            echo '=== 1. 备份当前 .output 与上传图片 ==='
+            rm -rf .output.bak /tmp/eran_uploads
             [ -d .output ] && mv .output .output.bak || echo '无旧 .output'
+            [ -d .output.bak/public/images/works ] && mv .output.bak/public/images/works /tmp/eran_uploads || echo '无上传图片'
             echo '=== 2. 解压新产物 ==='
             mkdir -p .output
             tar -xzf /tmp/eran_output.tar.gz -C .output
             rm -f /tmp/eran_output.tar.gz
+            echo '=== 2.5 恢复上传图片（后台新传的图片不被覆盖） ==='
+            if [ -d /tmp/eran_uploads ]; then
+              mkdir -p .output/public/images
+              mv /tmp/eran_uploads .output/public/images/works
+              echo '上传图片已恢复'
+            fi
             echo '=== 3. 确保 better-sqlite3 原生模块可用（服务器 node_modules） ==='
             node -e \"require('better-sqlite3'); console.log('better-sqlite3 OK')\" 2>&1 || pnpm rebuild better-sqlite3
             echo '=== 4. 重启 PM2 ==='
