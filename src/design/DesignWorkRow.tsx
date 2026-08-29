@@ -2,12 +2,12 @@ import { For, Show, createEffect, createSignal, onCleanup, onMount } from 'solid
 import type { IWorkListItem } from '~/serverAction/works'
 import { useNavigate, useParams } from '@solidjs/router'
 
-/** 从 content 数组提取全部图片 URL */
+/** 从 content 数组提取全部图片 URL（覆盖后台全部 contentType 字段：image/L_image/r_image/l_image/R_image/image1/image2 等） */
 function extractImages(item: IWorkListItem): string[] {
   if (!item.content || !Array.isArray(item.content))
     return item.cover ? [item.cover] : []
   const urls = item.content
-    .map(c => (c.image || c.L_image || c.R_image || c.M_image || ''))
+    .flatMap(c => [c.image, c.L_image, c.r_image, c.l_image, c.R_image, c.M_image, c.image1, c.image2])
     .filter(Boolean)
   if (!urls.length && item.cover)
     return [item.cover]

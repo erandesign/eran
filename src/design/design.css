@@ -64,6 +64,15 @@ html.dark .eran-design,
 }
 .eran-design .d-nav a:hover::after { width: 100%; }
 .eran-design .d-nav a.active::after { width: 100%; }
+/* 语言切换 */
+.eran-design .d-lang {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .08em;
+  margin-left: 12px; cursor: pointer;
+}
+.eran-design .d-lang span { opacity: .55; transition: opacity .25s ease; }
+.eran-design .d-lang span.active { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+.eran-design .d-lang .d-lang-sep { opacity: .3; cursor: default; }
 
 /* ---------- 页面区块容器 ---------- */
 .eran-design section { position: relative; padding: 0 48px; }
@@ -182,7 +191,8 @@ html.dark .eran-design,
 
 /* 作品行移动端 */
 @media (max-width: 900px) {
-  .eran-design .d-work-row, .eran-design .d-work-row:nth-child(even) { flex-direction: column; min-height: auto; }
+  .eran-design .d-work-row, .eran-design .d-work-row:nth-child(even),
+  .eran-design #d-workRows > .d-reveal:nth-child(even) .d-work-row { flex-direction: column; min-height: auto; }
   .eran-design .d-work-media { height: 60vh; }
   .eran-design .d-work-row.expanded .d-work-media { flex-basis: auto; height: auto; overflow: visible; }
   .eran-design .d-work-row.expanded .d-media-track { height: auto; aspect-ratio: 4/3; }

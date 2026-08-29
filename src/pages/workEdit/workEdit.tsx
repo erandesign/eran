@@ -1,4 +1,4 @@
-import { createForm, email, getValue, insert, move, remove, required, setValues } from '@modular-forms/solid'
+import { createForm, email, getValue, insert, move, remove, required, setValue, setValues } from '@modular-forms/solid'
 import { useAction, useLocation, useNavigate, useParams } from '@solidjs/router'
 import toast from '@thinke/toast'
 import { cloneDeep } from 'lodash-es'
@@ -10,6 +10,7 @@ import { InputLabel } from '~/components/form/InputLabel'
 import { Select } from '~/components/form/Select'
 import type { TextInputProps } from '~/components/form/TextInput'
 import { TextInput } from '~/components/form/TextInput'
+import UploadImage from '~/components/form/UploadImage'
 import { availableLanguageTags, i18n } from '~/components/i18n'
 import type { IWorkListItem } from '~/serverAction/works'
 import { addWork, getMaxWorkIndex, getWorkById, saveWork } from '~/serverAction/works'
@@ -101,15 +102,25 @@ export default function WorkEdit() {
                 {item => (
                   <Field name={item.key as any} validate={[required('必填项')]}>
                     {(field, props) => (
-                      <TextInput
-                        {...props}
-                        label={item.label}
-                        type={item.type ?? 'text'}
-                        value={field.value}
-                        error={field.error}
-                        required
-                        widthFull={(item.type ?? 'text') === 'text'}
-                      />
+                      <>
+                        <TextInput
+                          {...props}
+                          label={item.label}
+                          type={item.type ?? 'text'}
+                          value={field.value}
+                          error={field.error}
+                          required
+                          widthFull={(item.type ?? 'text') === 'text'}
+                        />
+                        {/* 图片字段：提供本地文件上传（自动填入相对路径） */}
+                        <Show when={item.key === 'cover'}>
+                          <UploadImage
+                            label={item.label}
+                            value={field.value}
+                            onUploaded={(url) => setValue(workForm, 'cover', url)}
+                          />
+                        </Show>
+                      </>
                     )}
                   </Field>
                 )}
@@ -201,15 +212,25 @@ export default function WorkEdit() {
                                   {item => (
                                     <Field name={`content.${index()}.${item.key}`} validate={[required('必填项')]}>
                                       {(field, props) => (
-                                        <TextInput
-                                          {...props}
-                                          label={item.label}
-                                          type={item.type ?? 'text'}
-                                          value={field.value}
-                                          error={field.error}
-                                          required
-                                          widthFull={(item.type ?? 'text') === 'text'}
-                                        />
+                                        <>
+                                          <TextInput
+                                            {...props}
+                                            label={item.label}
+                                            type={item.type ?? 'text'}
+                                            value={field.value}
+                                            error={field.error}
+                                            required
+                                            widthFull={(item.type ?? 'text') === 'text'}
+                                          />
+                                          {/* 图片字段：提供本地文件上传（自动填入相对路径） */}
+                                          <Show when={typeof item.key === 'string' && (item.key as string).includes('image')}>
+                                            <UploadImage
+                                              label={item.label}
+                                              value={field.value}
+                                              onUploaded={(url) => setValue(workForm, `content.${index()}.${item.key}` as any, url)}
+                                            />
+                                          </Show>
+                                        </>
                                       )}
                                     </Field>
                                   )}
