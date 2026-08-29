@@ -63,7 +63,7 @@ export function ThemeChange(props: { class?: string }) {
         else toDark()
       }}
     >
-      <img class="s-full" src={theme() === 'dark' ? '/images/switch_moon.svg' : '/images/switchh_sun.svg'} draggable={false} />
+      <img class="s-full cursor-pointer" src={theme() === 'dark' ? '/images/switch_moon.svg' : '/images/switchh_sun.svg'} draggable={false} />
     </div>
   )
 };
