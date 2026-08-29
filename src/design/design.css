@@ -64,15 +64,42 @@ html.dark .eran-design,
 }
 .eran-design .d-nav a:hover::after { width: 100%; }
 .eran-design .d-nav a.active::after { width: 100%; }
-/* 语言切换 */
+/* 语言切换：下拉菜单 */
 .eran-design .d-lang {
-  display: inline-flex; align-items: center; gap: 6px;
+  position: relative; display: inline-flex; align-items: center; gap: 4px;
   font-family: var(--f-label); font-size: 11px; letter-spacing: .08em;
-  margin-left: 12px; cursor: pointer;
+  margin-left: 14px; cursor: pointer; user-select: none;
 }
-.eran-design .d-lang span { opacity: .55; transition: opacity .25s ease; }
-.eran-design .d-lang span.active { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
-.eran-design .d-lang .d-lang-sep { opacity: .3; cursor: default; }
+.eran-design .d-lang-current { opacity: .8; transition: opacity .25s ease; }
+.eran-design .d-lang:hover .d-lang-current { opacity: 1; }
+.eran-design .d-lang-arrow { font-size: 9px; opacity: .6; transition: transform .25s ease; }
+.eran-design .d-lang.open .d-lang-arrow { transform: rotate(180deg); }
+/* 下拉菜单 */
+.eran-design .d-lang-menu {
+  position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%) translateY(-6px);
+  min-width: 84px; padding: 6px 0; border-radius: 8px;
+  background: var(--ink); border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease, visibility .22s;
+  z-index: 60;
+}
+.eran-design.d-contact .d-lang-menu { background: var(--paper); border-color: rgba(0,0,0,.12); }
+.eran-design .d-lang.open .d-lang-menu {
+  opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%) translateY(0);
+}
+.eran-design .d-lang-menu span {
+  display: block; padding: 7px 18px; text-align: center;
+  font-family: var(--f-label); font-size: 11px; letter-spacing: .1em;
+  color: rgba(250,248,244,.75); opacity: 1; white-space: nowrap;
+  transition: background .2s ease, color .2s ease;
+}
+.eran-design.d-contact .d-lang-menu span { color: rgba(20,20,20,.75); }
+.eran-design .d-lang-menu span:hover { background: rgba(255,255,255,.08); color: #fff; }
+.eran-design.d-contact .d-lang-menu span:hover { background: rgba(0,0,0,.06); color: #000; }
+.eran-design .d-lang-menu span.active { color: var(--gold); }
+.eran-design.d-contact .d-lang-menu span.active { color: var(--gold); }
 
 /* ---------- 页面区块容器 ---------- */
 .eran-design section { position: relative; padding: 0 48px; }
