@@ -94,7 +94,9 @@ export default function DesignWorkRow(props: {
   }
 
   onCleanup(() => {
-    cancelAnimationFrame(raf)
+    // SSR cleanNode 也会调用 onCleanup —— 浏览器 API 需保护
+    if (typeof cancelAnimationFrame !== 'undefined')
+      cancelAnimationFrame(raf)
   })
 
   // 当前幻灯索引（圆点高亮）

@@ -18,7 +18,7 @@ import useMomentumScroll from '~/design/useMomentumScroll'
 /** 首页（新设计 REFINED） */
 export default function Home() {
   const param = useParams()
-  // 一次性加载全部作品（唯一数据源，SSR 安全）
+  // 一次性加载全部作品（唯一数据源）
   const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
   createMemo(() => {
     const list = allData()
@@ -40,6 +40,7 @@ export default function Home() {
       <DesignHeader />
 
       <div id="d-scaleWrap">
+        {/* Hero：SSR 阶段 heroImgs 为空（数据未到），客户端水合后显示；避免阻塞 SSR */}
         <Hero heroImgs={heroImgs()} />
 
         {/* Intro 引言 */}

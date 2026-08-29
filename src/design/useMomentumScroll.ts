@@ -71,7 +71,9 @@ export default function useMomentumScroll(wrapId = 'd-scaleWrap') {
 
     onCleanup(() => {
       window.removeEventListener('wheel', onWheel)
-      cancelAnimationFrame(raf)
+      // SSR cleanNode 也会调用 onCleanup —— 浏览器 API 需保护
+      if (typeof cancelAnimationFrame !== 'undefined')
+        cancelAnimationFrame(raf)
       scaleWrap.style.transform = ''
     })
   })
