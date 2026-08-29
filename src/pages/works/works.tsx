@@ -23,12 +23,22 @@ export default function Works() {
       cacheWorks(param.lang, list)
   })
 
-  // 全部类型（数据库真实分类）
+  // 分类：从数据动态生成（设计稿：['全部', ...new Set(works.map(w=>w.cat))]），只显示实际存在的
   const allTypes = createMemo(() => {
     const list = allData() || []
+    const cats = [...new Set(list.map(w => w.type))]
+    // 保持 i18n 顺序（zhAll 顺序），只保留数据里存在的
     const zhAll = i18n.subTitles({}, { lang: 'zh' })
     const curAll = i18n.subTitles()
-    return ['全部', ...zhAll.map((t, i) => curAll[i] ?? t)]
+    const ordered = zhAll
+      .filter(t => cats.includes(t))
+      .map(t => curAll[zhAll.indexOf(t)] ?? t)
+    // 补充数据中存在但 i18n 没有的类型
+    for (const c of cats) {
+      if (!ordered.includes(c))
+        ordered.push(c)
+    }
+    return ['全部', ...ordered]
   })
 
   // 当前筛选（URL type 参数）

@@ -55,6 +55,10 @@ export default function Concat() {
           <DesignReveal>
             <form ref={$from!} method="post" action={saveConcatInfo}>
               <div class="field">
+                <label>姓名 / 公司</label>
+                <input name="name" type="text" placeholder="您的姓名，以及公司或品牌名称" autocomplete="off" />
+              </div>
+              <div class="field">
                 <label>邮箱 / 电话</label>
                 <input name="phone" required type="text" placeholder="方便我们回复您" autocomplete="off" />
               </div>
@@ -68,6 +72,10 @@ export default function Concat() {
                   <option>网站 & APP</option>
                   <option>还不确定</option>
                 </select>
+              </div>
+              <div class="field">
+                <label>项目简述</label>
+                <textarea name="desc" placeholder="大概讲讲这个项目——地点、时间节点、预算范围，越具体越好" />
               </div>
               <button class="submit" type="submit"><span>发送 →</span></button>
               <div class="form-note">我们会尽快回复您。</div>
