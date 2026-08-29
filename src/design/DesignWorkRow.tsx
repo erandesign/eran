@@ -50,7 +50,7 @@ export default function DesignWorkRow(props: {
     setExpanded(!isOpen)
   }
 
-  // 滚轮横向滑动（展开后）
+  // 滚轮横向翻页（展开后）：滚轮 = 翻一张（scroll-snap mandatory 下渐进滚动会被吸回，逐张翻页最稳）
   const onWheel = (e: WheelEvent) => {
     if (!expanded() || !trackRef)
       return
@@ -59,23 +59,11 @@ export default function DesignWorkRow(props: {
       return
     e.preventDefault()
     e.stopPropagation()
-    trackTarget = Math.max(0, Math.min(trackTarget + e.deltaY * 1.15, max))
-    if (!trackRunning) {
-      trackRunning = true
-      const ease = () => {
-        if (!trackRef) {
-          trackRunning = false
-          return
-        }
-        trackRef.scrollLeft += (trackTarget - trackRef.scrollLeft) * 0.16
-        if (Math.abs(trackTarget - trackRef.scrollLeft) > 0.5)
-          raf = requestAnimationFrame(ease)
-        else {
-          trackRef.scrollLeft = trackTarget
-          trackRunning = false
-        }
-      }
-      raf = requestAnimationFrame(ease)
+    const dir = e.deltaY > 0 ? 1 : -1
+    const cur = Math.round(trackRef.scrollLeft / trackRef.clientWidth)
+    const next = Math.max(0, Math.min(cur + dir, Math.round(max / trackRef.clientWidth)))
+    if (next !== cur) {
+      trackRef.scrollTo({ left: next * trackRef.clientWidth, behavior: 'smooth' })
     }
   }
 
@@ -101,8 +89,14 @@ export default function DesignWorkRow(props: {
 
   onMount(() => {
     // Solid 的 onWheel JSX 属性在水合后可能未绑定，手动 addEventListener 确保滚轮翻页生效
-    if (typeof window !== 'undefined' && mediaRef) {
-      mediaRef.addEventListener('wheel', onWheel, { passive: false })
+    if (typeof window !== 'undefined') {
+      // mediaRef 在 Suspense 动态渲染下可能尚未赋值，用 DOM 查询兜底
+      const el = mediaRef || document.querySelector(`[data-work-row="${props.item.id}"] .d-work-media`)
+      if (el) {
+        el.addEventListener('wheel', onWheel, { passive: false })
+        // 记录绑定，供调试
+        ;(el as any).__wheelBound = true
+      }
     }
   })
 
@@ -126,6 +120,7 @@ export default function DesignWorkRow(props: {
     <div
       class={`d-work-row ${expanded() ? 'expanded' : ''} ${props.hide ? 'hide' : ''}`}
       data-cat={props.item.type}
+      data-work-row={props.item.id}
     >
       {/* 媒体区 */}
       <div
