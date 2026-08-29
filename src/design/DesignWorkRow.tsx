@@ -1,4 +1,4 @@
-import { For, Show, createSignal, onCleanup } from 'solid-js'
+import { For, Show, createSignal, onCleanup, onMount } from 'solid-js'
 import type { IWorkListItem } from '~/serverAction/works'
 import { useNavigate, useParams } from '@solidjs/router'
 
@@ -99,10 +99,20 @@ export default function DesignWorkRow(props: {
     dragging = false
   }
 
+  onMount(() => {
+    // Solid 的 onWheel JSX 属性在水合后可能未绑定，手动 addEventListener 确保滚轮翻页生效
+    if (typeof window !== 'undefined' && mediaRef) {
+      mediaRef.addEventListener('wheel', onWheel, { passive: false })
+    }
+  })
+
   onCleanup(() => {
     // SSR cleanNode 也会调用 onCleanup —— 浏览器 API 需保护
     if (typeof cancelAnimationFrame !== 'undefined')
       cancelAnimationFrame(raf)
+    if (typeof window !== 'undefined' && mediaRef) {
+      mediaRef.removeEventListener('wheel', onWheel)
+    }
   })
 
   // 当前幻灯索引（圆点高亮）
@@ -121,7 +131,6 @@ export default function DesignWorkRow(props: {
       <div
         class="d-work-media"
         ref={mediaRef!}
-        onWheel={onWheel}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
