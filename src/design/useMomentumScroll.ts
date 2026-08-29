@@ -10,6 +10,10 @@ export default function useMomentumScroll(wrapId = 'd-scaleWrap') {
   onMount(() => {
     if (typeof window === 'undefined')
       return
+    // 触摸设备（手机/平板）禁用：无 wheel 事件，rAF + scrollTo 干扰原生滚动导致抖动
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    if (isTouch)
+      return
     const scaleWrap = document.getElementById(wrapId)
     if (!scaleWrap)
       return
