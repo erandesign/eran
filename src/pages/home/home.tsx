@@ -71,7 +71,7 @@ export default function Home() {
           </Suspense>
           <div class="d-view-all">
             <DesignReveal>
-              <A href="/works">查看全部项目 →</A>
+              <A href={`/${param.lang}/works`}>查看全部项目 →</A>
             </DesignReveal>
           </div>
         </section>
