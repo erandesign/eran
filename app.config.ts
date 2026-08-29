@@ -23,9 +23,10 @@ export default defineConfig({
   },
   server: isBuild
     ? {
-        // 预渲染在 GitHub Actions runner（内存充足）执行，服务器本地 967MB 会挂起
+        // 预渲染 /zh 首页时 createResource 服务端请求挂起（旧版 Suspense 包裹不预取，新版顶层直取）
+        // 临时禁用：SSR 运行时渲染 + Cloudflare 60s 缓存仍满足 SEO
         prerender: {
-          routes: ['/'].concat(langs, routes.map(v => langs.map(l => l + v)).flat(1)),
+          routes: [],
         },
         // 静态资源缓存策略（透传给 Nitro routeRules）
         routeRules: {

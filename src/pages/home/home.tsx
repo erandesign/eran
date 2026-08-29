@@ -12,13 +12,13 @@ import DesignHeader from '~/design/DesignHeader'
 import DesignFooter from '~/design/DesignFooter'
 import DesignReveal from '~/design/DesignReveal'
 import DesignWorkRow from '~/design/DesignWorkRow'
-import { Hero, CAPS, CLIENTS } from '~/design/DesignHomeParts'
+import Hero, { CAPS, CLIENTS } from '~/design/DesignHomeParts'
 import useMomentumScroll from '~/design/useMomentumScroll'
 
 /** 首页（新设计 REFINED） */
 export default function Home() {
   const param = useParams()
-  // 一次性加载全部作品（分类切换纯前端过滤）
+  // 一次性加载全部作品（唯一数据源，SSR 安全）
   const [allData] = createResource(() => ({ lang: param.lang, type: '' }), getAllWorks)
   createMemo(() => {
     const list = allData()
@@ -26,6 +26,7 @@ export default function Home() {
       cacheWorks(param.lang, list)
   })
   const works = () => (allData() || []).slice(0, 5)
+  const heroImgs = () => works().map(w => w.cover).filter(Boolean)
 
   useMomentumScroll()
 
@@ -39,7 +40,7 @@ export default function Home() {
       <DesignHeader />
 
       <div id="d-scaleWrap">
-        <Hero />
+        <Hero heroImgs={heroImgs()} />
 
         {/* Intro 引言 */}
         <section id="d-intro">
