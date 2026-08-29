@@ -97,8 +97,7 @@ export default function Detail() {
       <DesignHeader />
 
       <div id="d-scaleWrap">
-        <ErrorBoundary fallback={<NotShow />}>
-          <Show when={data()} fallback={<NotShow />}>
+        <Show when={data()} fallback={<NotShow />}>
             {/* 封面 */}
             <div style={{ 'height': '100vh', overflow: 'hidden' }}>
               <Image class="s-full object-cover" src={data()!.cover} alt={data()!.name} lazy={false} />
@@ -216,7 +215,6 @@ export default function Detail() {
               </section>
             </Show>
           </Show>
-        </ErrorBoundary>
 
         <DesignFooter rev={`WORK ${data()?.id || ''} — REV.2026.08`} />
       </div>
