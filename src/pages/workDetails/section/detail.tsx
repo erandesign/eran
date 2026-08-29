@@ -1,5 +1,5 @@
 import { useParams } from '@solidjs/router'
-import { ErrorBoundary, For, Show, createEffect, createResource, onCleanup } from 'solid-js'
+import { For, Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js'
 import dayjs from 'dayjs'
 import { Title } from '@solidjs/meta'
 import { contentTypeMap } from './contentTypeMap'
@@ -52,20 +52,19 @@ export default function Detail() {
 
   useMomentumScroll()
 
-  // NEXT PROJECT：从缓存列表取当前作品的下一个（同语言，公开）
-  const nextWork = createResource(
-    () => data()?.id,
-    (id) => {
-      const list = getAllCachedWorks(lang()) || []
-      if (!list.length)
-        return undefined
-      const idx = list.findIndex(w => w.id === id)
-      if (idx < 0)
-        return undefined
-      return list[(idx + 1) % list.length]
-    },
-    {},
-  )
+  // NEXT PROJECT：从缓存列表取当前作品的下一个（客户端 data 到达后计算；SSR 阶段不渲染，避免 resource 依赖 resource 的 SSR 坑）
+  const [nextItem, setNextItem] = createSignal<any>(undefined)
+  createEffect(() => {
+    const item = data()
+    if (!item)
+      return
+    const list = getAllCachedWorks(lang()) || []
+    if (list.length) {
+      const idx = list.findIndex(w => Number(w.id) === Number(item.id))
+      if (idx >= 0)
+        setNextItem(list[(idx + 1) % list.length])
+    }
+  })
 
   return (
     <div class="eran-design">
@@ -184,11 +183,11 @@ export default function Detail() {
             </section>
 
             {/* NEXT PROJECT */}
-            <Show when={nextWork()}>
+            <Show when={nextItem()}>
               <section id="d-next-project" style={{ padding: '0 48px 140px' }}>
                 <DesignReveal>
                   <A
-                    href={`/${lang()}/work/${nextWork()!.id}`}
+                    href={`/${lang()}/work/${nextItem()!.id}`}
                     style={{ display: 'block', 'text-decoration': 'none' }}
                   >
                     <div style={{
@@ -200,10 +199,10 @@ export default function Detail() {
                           NEXT PROJECT
                         </div>
                         <h2 style={{ 'font-family': 'var(--f-serif)', 'font-weight': '400', 'font-size': 'clamp(24px, 3vw, 44px)', 'line-height': '1.2' }}>
-                          {nextWork()!.name}
+                          {nextItem()!.name}
                         </h2>
                         <div style={{ 'font-family': 'var(--f-label)', 'font-size': '11px', color: 'var(--grey)', 'letter-spacing': '.05em', 'text-transform': 'uppercase', 'margin-top': '12px' }}>
-                          {nextWork()!.type} · {nextWork()!.address}
+                          {nextItem()!.type} · {nextItem()!.address}
                         </div>
                       </div>
                       <div style={{ 'font-family': 'var(--f-it)', 'font-style': 'italic', 'font-size': 'clamp(20px, 2vw, 30px)', color: 'var(--ink)' }}>
