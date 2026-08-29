@@ -46,7 +46,9 @@ export default function Works() {
     if (c === '全部' || !c)
       return list
     const zhAll = i18n.subTitles({}, { lang: 'zh' })
-    const zhType = zhAll[allTypes().indexOf(c)]
+    const idx = allTypes().indexOf(c)
+    // allTypes()[0]='全部'，zhAll 从 0 开始对应 allTypes()[1..]，所以取 zhAll[idx-1]
+    const zhType = idx > 0 ? zhAll[idx - 1] : c
     return list.filter(v => v.type === zhType || v.type === c)
   })
 
