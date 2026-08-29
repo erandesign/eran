@@ -1,4 +1,4 @@
-import { For, Show, createSignal, onCleanup, onMount } from 'solid-js'
+import { For, Show, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import type { IWorkListItem } from '~/serverAction/works'
 import { useNavigate, useParams } from '@solidjs/router'
 
@@ -19,7 +19,10 @@ function extractImages(item: IWorkListItem): string[] {
  * - 点击展开：media 扩到 100%，信息面板滑入
  * - 展开后滚轮/拖拽横向滑动浏览多图
  * - 移动端：上下堆叠，面板在图片下方展开
+ * 互斥：模块级 expandedId 共享，同时只展开一行（Solid 响应式）
  */
+const [expandedId, setExpandedId] = createSignal(0)
+
 export default function DesignWorkRow(props: {
   item: IWorkListItem
   index: number
@@ -33,7 +36,13 @@ export default function DesignWorkRow(props: {
     navigate(`/${lang}/work/${props.item.id}`)
   }
   const imgs = extractImages(props.item)
+  // expanded = 全局互斥状态（响应式）：当前行展开 ⇔ expandedId === item.id
   const [expanded, setExpanded] = createSignal(false)
+  // 监听全局展开 id：其他行展开时本行收起
+  createEffect(() => {
+    if (expandedId() !== props.item.id)
+      setExpanded(false)
+  })
   let mediaRef: HTMLDivElement
   let trackRef: HTMLDivElement
   let trackTarget = 0
@@ -47,6 +56,8 @@ export default function DesignWorkRow(props: {
       trackRef.scrollLeft = 0
       trackTarget = 0
     }
+    // 互斥：展开自己时先收其他行；收起自己时清空
+    setExpandedId(isOpen ? 0 : props.item.id)
     setExpanded(!isOpen)
   }
 
