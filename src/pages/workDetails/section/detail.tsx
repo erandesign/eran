@@ -6,7 +6,7 @@ import { contentTypeMap } from './contentTypeMap'
 import { I18n, i18n } from '~/components/i18n'
 import SeoMeta from '~/components/SeoMeta'
 import { WorkJsonLd } from '~/components/JsonLd'
-import { getPublicWorkById, getWorkById } from '~/serverAction/works'
+import { getPublicWorkById, getAllWorks, getWorkById } from '~/serverAction/works'
 import Image from '~/components/Image'
 import Lightbox from '~/components/Lightbox'
 import DesignCursor from '~/design/DesignCursor'
@@ -14,7 +14,7 @@ import DesignHeader from '~/design/DesignHeader'
 import DesignFooter from '~/design/DesignFooter'
 import DesignReveal from '~/design/DesignReveal'
 import useMomentumScroll from '~/design/useMomentumScroll'
-import { getWorkFromCache, getAllCachedWorks } from '~/components/workCache'
+import { getWorkFromCache, getAllCachedWorks, cacheWorks } from '~/components/workCache'
 import { languageTag } from '~/components/i18n'
 import { A } from '@solidjs/router'
 
@@ -63,6 +63,15 @@ export default function Detail() {
       const idx = list.findIndex(w => Number(w.id) === Number(item.id))
       if (idx >= 0)
         setNextItem(list[(idx + 1) % list.length])
+    }
+    else {
+      // 直接刷新详情页（无缓存）：拉取一次全量并缓存
+      getAllWorks({ lang: lang(), type: '' }).then((works: any[]) => {
+        cacheWorks(lang(), works)
+        const idx = works.findIndex(w => Number(w.id) === Number(item.id))
+        if (idx >= 0)
+          setNextItem(works[(idx + 1) % works.length])
+      }).catch(() => {})
     }
   })
 
