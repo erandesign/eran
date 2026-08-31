@@ -23,7 +23,6 @@ export default function ConcatBlock() {
       {/* <div class="col-span-full h-530 f-e/sb pb-60"> */}
       <div class="col-1/span10 flex flex gap-12 text-12 text-#858585 tracking-3">
         <I18n i18n={i18n.concat_copyright} class="font-mr" />
-        <a href="http://beian.miit.gov.cn/" class="text-#858585 decoration-none text-oneline font-mr" target="_blank">粤ICP备2024264588号-1</a>
       </div>
 
       <div class="col-span4/-1 mt-132">
